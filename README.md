@@ -6,12 +6,16 @@ SEBI RIA Registration No: INA000017523 | 1 Finance Private Limited
 
 ## What the page shows
 
-- **Headline numbers:** combined market cap, market-cap weighted trailing yield, 10-year G-sec yield, RBI repo rate and average price to NAV.
-- **Latest REIT news:** results, payouts, deals, debt raises, index changes, SEBI and RBI decisions and tax changes, filterable by REIT and topic, each linked to its source.
-- **Side-by-side comparison:** a sortable table of price, market cap, trailing and run-rate yield, spread over the G-sec, NAV, price to NAV, occupancy, WALE and LTV.
-- **Charts:** yield against the 10-year G-sec, price to NAV, position in the 52-week range, quarterly distribution per unit, and the dividend, interest and debt repayment mix of the latest payout.
-- **Income estimator:** units, yearly payouts and an indicative post-tax yield for an amount, REIT and tax slab.
-- **REIT profiles, rates backdrop, SM REITs, definitions, tax notes and sources.**
+The page is split into six tabs so each view stays uncluttered.
+
+- **Overview:** four headline numbers, a card for each REIT (yield, price to NAV, occupancy, what it owns and where) and the three latest news items.
+- **Holdings:** pick a REIT to see every property it owns, with city, type, area, occupancy and share of portfolio value, plus value split by city and by asset type.
+- **Compare:** a sortable table of price, market cap, trailing yield, spread over the G-sec, price to NAV, occupancy, WALE and LTV, with yield and price-to-NAV charts.
+- **Payouts:** quarterly distribution per unit, the dividend, interest and debt repayment mix, and an income estimator.
+- **News:** results, payouts, deals, debt, index changes, rules and tax, filterable by REIT and topic, each linked to its source.
+- **Learn:** rates backdrop, SM REITs, definitions, tax notes, 2026 changes and sources.
+
+Each tab has its own link, for example `index.html#holdings`.
 
 REITs covered: Embassy Office Parks REIT, Mindspace Business Parks REIT, Brookfield India Real Estate Trust, Nexus Select Trust, Knowledge Realty Trust and Bagmane Prime Office REIT, plus the listed SM REIT schemes.
 
@@ -29,6 +33,7 @@ REITs covered: Embassy Office Parks REIT, Mindspace Business Parks REIT, Brookfi
 | `data/macro.json` | RBI repo rate and 10-year G-sec yield |
 | `data/news.json` | News items: date, REIT, topic, headline, summary, source, link |
 | `data/sm_reits.json` | SM REIT schemes, listed and filed |
+| `data/holdings.json` | Every property per REIT: city, type, completed and total area, occupancy, WALE, share of value, hotel keys or solar MW, notes |
 
 Yields, market cap, price to NAV and the other derived figures are worked out in the page from these files, so updating a JSON file updates every chart and table that uses it.
 

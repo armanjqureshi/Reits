@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Indian Listed REITs Tracker | 1 Finance</title>
-<meta name="description" content="Prices, yields, NAV, payouts, portfolio metrics and news for every listed Indian REIT. Educational tool by 1 Finance.">
+<meta name="description" content="Prices, yields, NAV, payouts, property holdings and news for every listed Indian REIT. Educational tool by 1 Finance.">
 <link rel="stylesheet" href="assets/theme.css">
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="assets/dash-runtime.js"></script>
@@ -12,245 +12,322 @@
 <body>
 <div id="dash-root">
 <style>
-.rt{--rt-b1:#9A6640;--rt-b2:#6B4429;--rt-b3:#C08F66;--rt-b4:#DDBFA3;--rt-light:#F3EBE3;font-family:'Fira Sans',var(--font-anthropic-sans);color:var(--color-fg);display:flex;flex-direction:column;gap:var(--cds-gap-xl)}
+.rt{--rt-b1:#9A6640;--rt-b2:#6B4429;--rt-b3:#C08F66;--rt-b4:#DDBFA3;--rt-light:#F6EFE8;font-family:'Fira Sans',var(--font-anthropic-sans);color:var(--color-fg);line-height:1.5}
 .rt *{border-radius:0 !important}
-.rt h1{font-family:'Fira Sans',var(--font-anthropic-sans);font-weight:600;font-size:var(--cds-font-size-title);line-height:1.22;margin:0}
-.rt h2{font-weight:600;font-size:var(--cds-font-size-heading);margin:0 0 var(--cds-gap-xs)}
+.rt h1{font-family:'Spirit Soft','Fira Sans',var(--font-anthropic-sans);font-weight:400;font-size:34px;line-height:1.22;margin:0}
+.rt h2{font-weight:600;font-size:var(--cds-font-size-heading);margin:0 0 4px}
 .rt h3{font-weight:600;font-size:var(--cds-font-size-body);margin:0}
 .rt p{margin:0}
-.rt .muted{color:var(--color-fg-muted)}
+.rt a{color:inherit}
 .rt .cap{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
 .rt .num{font-variant-numeric:tabular-nums}
-.rt .bar-top{border-top:4px solid var(--rt-b1);padding-top:var(--cds-pad-md)}
-.rt .lede{font-size:var(--cds-font-size-body);max-width:72ch;margin-top:var(--cds-gap-sm)}
+.rt .eyebrow{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--rt-b1);font-weight:500}
+.rt header{padding:8px 0 20px}
+.rt .lede{font-size:17px;max-width:62ch;margin-top:10px}
 .rt .lede b{font-weight:600}
-.rt .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--cds-gap-md)}
-.rt .tile{background:var(--color-panel);border:1px solid var(--color-border-line);border-left:4px solid var(--rt-b1);padding:var(--cds-pad-md) var(--cds-pad-lg)}
-.rt .tile .v{font-size:var(--cds-font-size-title);font-weight:500;font-variant-numeric:tabular-nums;margin:4px 0}
-.rt .card{background:var(--color-panel);border:1px solid var(--color-border-line);padding:var(--cds-pad-lg)}
-.rt .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--cds-gap-lg)}
-.rt .chart{position:relative;min-height:220px}
+
+/* tabs */
+.rt .tabs{position:sticky;top:0;z-index:4;background:var(--color-bg);display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--color-border-line);margin-bottom:32px}
+.rt .tabs button{font:inherit;font-size:15px;background:none;border:0;border-bottom:3px solid transparent;padding:12px 14px 10px;color:var(--color-fg-muted);cursor:pointer;white-space:nowrap}
+.rt .tabs button:hover{color:var(--color-fg)}
+.rt .tabs button[aria-selected=true]{color:var(--color-fg);border-bottom-color:var(--rt-b1);font-weight:500}
+.rt .panel{display:flex;flex-direction:column;gap:48px}
+.rt .panel[hidden]{display:none}
+.rt .sec-head{margin-bottom:16px}
+.rt .sec-head .cap{max-width:70ch}
+
+/* key numbers */
+.rt .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:24px}
+.rt .stat{border-top:2px solid var(--rt-b1);padding-top:10px}
+.rt .stat .v{font-size:28px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.2;margin:2px 0}
+
+/* REIT cards */
+.rt .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.rt .rcard{background:var(--color-panel);border:1px solid var(--color-border-line);padding:20px;display:flex;flex-direction:column;gap:12px}
+.rt .rcard .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.rt .rcard .type{font-size:12px;color:var(--color-fg-muted)}
+.rt .rcard .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rt .rcard .nums .v{font-size:19px;font-weight:500;font-variant-numeric:tabular-nums}
+.rt .rcard .owns{font-size:var(--cds-font-size-caption);line-height:1.5}
+.rt .link-btn{font:inherit;font-size:var(--cds-font-size-caption);align-self:flex-start;background:none;border:0;border-bottom:1px solid var(--rt-b1);padding:0 0 1px;color:var(--color-fg);cursor:pointer}
+.rt .link-btn:hover{color:var(--rt-b1)}
+
+/* tables */
 .rt .tw{overflow-x:auto}
-.rt table{border-collapse:collapse;width:100%;font-size:var(--cds-font-size-caption);font-variant-numeric:tabular-nums}
-.rt th,.rt td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
+.rt table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+.rt th,.rt td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
 .rt th:first-child,.rt td:first-child,.rt .l{text-align:left}
-.rt th{font-weight:500;color:var(--color-fg-muted);cursor:pointer;user-select:none;vertical-align:bottom}
+.rt th{font-weight:500;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);vertical-align:bottom}
+.rt th[data-k]{cursor:pointer;user-select:none}
 .rt th[aria-sort=descending]::after{content:" ↓"}
 .rt th[aria-sort=ascending]::after{content:" ↑"}
 .rt td.name{font-weight:500}
-.rt .tag{display:inline-block;font-size:11px;padding:1px 6px;border:1px solid var(--color-border-line);color:var(--color-fg-muted);margin-left:6px}
+.rt td.wrap{white-space:normal;min-width:220px}
+.rt td .sub{display:block;font-size:12px;color:var(--color-fg-muted);font-weight:400;margin-top:2px}
 .rt .good{color:var(--color-ok)}.rt .bad{color:var(--color-bad)}
+
+/* charts */
+.rt .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:40px}
+.rt .chart{position:relative;min-height:200px}
 .rt .rt-tip{position:absolute;pointer-events:none;background:var(--cds-surface-popover);border:1px solid var(--cds-border);box-shadow:var(--cds-shadow-popover);padding:6px 9px;font-size:var(--cds-font-size-caption);z-index:5;max-width:240px;white-space:normal}
 .rt .rt-tip b{font-weight:600}
 .rt svg text{font-family:'Fira Sans',var(--font-anthropic-sans)}
 .rt .axis text{fill:var(--cds-text-secondary);font-size:11px}
-.rt .axis path,.rt .axis line{stroke:var(--cds-chart-axis)}
-.rt .legend{display:flex;flex-wrap:wrap;gap:var(--cds-gap-md);font-size:var(--cds-font-size-caption);margin:var(--cds-gap-sm) 0}
+.rt .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:var(--cds-font-size-caption);margin:8px 0}
 .rt .legend i{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-2px}
-.rt .sm{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--cds-gap-md)}
-.rt .sm>div{border:1px solid var(--color-border-line);padding:var(--cds-pad-sm) var(--cds-pad-md);position:relative}
-.rt .ctl{display:flex;flex-wrap:wrap;gap:var(--cds-gap-md);align-items:end;margin-bottom:var(--cds-gap-md)}
+.rt .sm{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px}
+.rt .sm>div{position:relative}
+
+/* controls */
+.rt .ctl{display:flex;flex-wrap:wrap;gap:16px;align-items:end;margin-bottom:16px}
 .rt .ctl label{display:flex;flex-direction:column;gap:4px;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
-.rt input[type=number]{font:inherit;font-size:var(--cds-font-size-body);padding:6px 8px;border:1px solid var(--color-border-line);background:var(--color-bg);color:var(--color-fg);width:160px}
+.rt input[type=number]{font:inherit;font-size:var(--cds-font-size-body);padding:7px 10px;border:1px solid var(--color-border-line);background:var(--color-bg);color:var(--color-fg);width:170px}
 .rt .dash-select{min-width:200px;max-width:100%}
-.rt #prof-reit,.rt #news-reit{min-width:320px}
-.rt dl.kv{display:grid;grid-template-columns:minmax(120px,max-content) 1fr;gap:6px 16px;margin:0;font-size:var(--cds-font-size-caption)}
+.rt #news-reit{min-width:260px}
+.rt .seg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.rt .seg button{font:inherit;font-size:14px;padding:8px 14px;border:1px solid var(--color-border-line);background:var(--color-bg);color:var(--color-fg);cursor:pointer}
+.rt .seg button[aria-pressed=true]{background:var(--rt-b2);border-color:var(--rt-b2);color:#fff}
+
+/* holdings */
+.rt .h-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:4px}
+.rt .h-title h2{margin:0;font-size:24px;font-weight:500}
+.rt .h-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:24px;margin:20px 0 8px}
+.rt .h-stats .v{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+.rt .pill{display:inline-block;font-size:12px;padding:1px 7px;margin-right:4px}
+.rt .pill.Office{background:var(--rt-light);color:var(--rt-b2)}
+.rt .pill.Mall{background:var(--rt-b2);color:#fff}
+.rt .pill.Hotel{background:var(--rt-b3);color:#2b1a10}
+.rt .pill.Solar{background:var(--rt-b4);color:#2b1a10}
+.rt .pill.Other{border:1px solid var(--color-border-line);color:var(--color-fg-muted)}
+
+/* misc */
+.rt dl.kv{display:grid;grid-template-columns:minmax(140px,max-content) 1fr;gap:8px 20px;margin:12px 0 0;font-size:14px}
 .rt dl.kv dt{color:var(--color-fg-muted)}.rt dl.kv dd{margin:0}
-.rt .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--cds-gap-md)}
-.rt .out div{border-left:4px solid var(--rt-b3);padding:4px 10px}
-.rt .out .v{font-size:var(--cds-font-size-heading);font-weight:500;font-variant-numeric:tabular-nums}
-.rt details{border:1px solid var(--color-border-line);padding:var(--cds-pad-md) var(--cds-pad-lg);background:var(--color-panel)}
+.rt .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:8px}
+.rt .out div{border-top:2px solid var(--rt-b3);padding-top:8px}
+.rt .out .v{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+.rt details{border-top:1px solid var(--color-border-line);padding:14px 0}
+.rt details:last-of-type{border-bottom:1px solid var(--color-border-line)}
 .rt details summary{cursor:pointer;font-weight:500}
-.rt details ul{margin:var(--cds-gap-sm) 0 0;padding-left:20px;line-height:1.55}
-.rt details li{margin-bottom:4px}
-.rt .foot{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);border-top:1px solid var(--color-border-line);padding-top:var(--cds-pad-md);line-height:1.5}
+.rt details ul{margin:10px 0 0;padding-left:20px;line-height:1.6;max-width:80ch}
+.rt details li{margin-bottom:6px}
+.rt .foot{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);border-top:1px solid var(--color-border-line);padding-top:16px;margin-top:56px;line-height:1.55}
 .rt .fail{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption);padding:20px 0}
-.rt [data-dash-source-state=refreshing]{opacity:.5}
-.rt a{color:inherit}
 .rt .news-list{list-style:none;margin:0;padding:0}
-.rt .news-item{display:grid;grid-template-columns:110px 1fr;gap:4px 18px;padding:14px 0;border-bottom:1px solid var(--color-border-line)}
+.rt .news-item{display:grid;grid-template-columns:110px 1fr;gap:4px 20px;padding:16px 0;border-bottom:1px solid var(--color-border-line)}
 .rt .news-item:first-child{padding-top:4px}
 .rt .news-date{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);font-variant-numeric:tabular-nums;padding-top:2px}
 .rt .news-item h3 a{text-decoration:none}
 .rt .news-item h3 a:hover{text-decoration:underline}
-.rt .news-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
-.rt .news-tags span{font-size:11px;padding:1px 6px;border:1px solid var(--color-border-line);color:var(--color-fg-muted)}
-.rt .news-tags span.new{background:var(--rt-b1);border-color:var(--rt-b1);color:#fff}
-.rt .news-sum{font-size:var(--cds-font-size-caption);line-height:1.5;margin-top:4px;max-width:80ch}
-.rt .rt-more{font:inherit;font-size:var(--cds-font-size-caption);margin-top:var(--cds-gap-md);padding:6px 12px;border:1px solid var(--rt-b1);background:transparent;color:var(--color-fg);cursor:pointer}
-@media (max-width:520px){.rt .news-item{grid-template-columns:1fr}}
+.rt .news-tags{font-size:12px;color:var(--color-fg-muted);margin-bottom:2px}
+.rt .news-tags .new{background:var(--rt-b1);color:#fff;padding:1px 6px;margin-right:6px}
+.rt .news-sum{font-size:14px;line-height:1.55;margin-top:4px;max-width:78ch;color:var(--color-fg-muted)}
+.rt .rt-more{font:inherit;font-size:var(--cds-font-size-caption);margin-top:16px;padding:7px 14px;border:1px solid var(--rt-b1);background:transparent;color:var(--color-fg);cursor:pointer}
+@media (max-width:560px){.rt .news-item{grid-template-columns:1fr}.rt h1{font-size:28px}.rt .rcard .nums .v{font-size:17px}}
 </style>
 
 <div class="rt">
 
-<header id="top" class="bar-top">
-  <p class="cap">1 Finance research tool · Real estate</p>
-  <h1>Indian Listed REITs Tracker</h1>
-  <p class="lede"><b data-draw="tk-top" data-source="market_summary" data-field="text" data-where="key=top_yield_name" class="dash-skeleton"></b> pays the highest trailing distribution yield at <b data-draw="tk-topy" data-source="market_summary" data-field="value" data-where="key=top_yield_pct" class="dash-skeleton"></b>%, against <b data-draw="tk-gsec" data-source="macro" data-field="value" data-where="metric=10-year G-sec yield" class="dash-skeleton"></b>% on the 10-year government bond. <b data-draw="tk-below" data-source="market_summary" data-field="value" data-where="key=below_nav_count" class="dash-skeleton"></b> of the 6 listed REITs trade below their latest NAV.</p>
-  <p class="cap" style="margin-top:6px">Unit prices as of <span data-draw="asof" data-source="prices" data-field="price_date" class="dash-skeleton"></span>. Fundamentals as of 30 September 2026 (Q2 FY27 results).</p>
+<header>
+  <p class="eyebrow">1 Finance research tool · Real estate</p>
+  <h1 style="margin-top:6px">Indian Listed REITs Tracker</h1>
+  <p class="lede"><b data-draw="tk-top" data-source="market_summary" data-field="text" data-where="key=top_yield_name" class="dash-skeleton"></b> pays the highest trailing distribution yield at <b data-draw="tk-topy" data-source="market_summary" data-field="value" data-where="key=top_yield_pct" class="dash-skeleton"></b>%, against <b data-draw="tk-gsec" data-source="macro" data-field="value" data-where="metric=10-year G-sec yield" class="dash-skeleton"></b>% on the 10-year government bond. <span data-draw="tk-below" data-source="market_summary" data-field="value" data-where="key=below_nav_count" class="dash-skeleton"></span></p>
+  <p class="cap" style="margin-top:8px">Prices as of <span data-draw="asof" data-source="prices" data-field="price_date" class="dash-skeleton"></span>. Fundamentals and holdings as of 30 September 2026 (Q2 FY27).</p>
 </header>
 
-<section id="snapshot" class="tiles">
-  <div class="tile"><p class="cap">Combined market cap</p><p class="v">₹<span data-draw="k-mcap" data-source="market_summary" data-field="value" data-where="key=total_mcap_lakh_cr" class="dash-skeleton"></span> lakh cr</p><p class="cap">Six listed REITs at current prices</p></div>
-  <div class="tile"><p class="cap">Weighted trailing yield</p><p class="v"><span data-draw="k-wy" data-source="market_summary" data-field="value" data-where="key=wtd_yield_pct" class="dash-skeleton"></span>%</p><p class="cap">Last 4 quarters of payouts, weighted by market cap</p></div>
-  <div class="tile"><p class="cap">10-year G-sec yield</p><p class="v"><span data-draw="k-gsec" data-source="macro" data-field="value" data-where="metric=10-year G-sec yield" class="dash-skeleton"></span>%</p><p class="cap">Risk-free benchmark for comparison</p></div>
-  <div class="tile"><p class="cap">RBI repo rate</p><p class="v"><span data-draw="k-repo" data-source="macro" data-field="value" data-where="metric=RBI repo rate" class="dash-skeleton"></span>%</p><p class="cap">Policy rate set by the MPC</p></div>
-  <div class="tile"><p class="cap">Average price to NAV</p><p class="v"><span data-draw="k-pnav" data-source="market_summary" data-field="value" data-where="key=avg_p_nav" class="dash-skeleton"></span>x</p><p class="cap">Below 1.0x means units trade under asset value</p></div>
-</section>
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
+  <button role="tab" data-tab="holdings" aria-selected="false">Holdings</button>
+  <button role="tab" data-tab="compare" aria-selected="false">Compare</button>
+  <button role="tab" data-tab="payouts" aria-selected="false">Payouts</button>
+  <button role="tab" data-tab="news" aria-selected="false">News</button>
+  <button role="tab" data-tab="learn" aria-selected="false">Learn</button>
+</nav>
 
-<section id="news" class="card">
-  <h2>Latest REIT news</h2>
-  <p class="cap" style="margin-bottom:var(--cds-gap-md)">Results, payouts, deals, debt raises, index changes, rules and tax news from the last three months, newest first. Click a headline to open the source.</p>
-  <div class="ctl">
-    <label>REIT<select class="dash-select" id="news-reit" aria-label="Filter news by REIT">
-      <option value="">All REITs and sector</option><option value="EMBASSY">Embassy</option><option value="MINDSPACE">Mindspace</option><option value="BIRET">Brookfield</option><option value="NXST">Nexus Select</option><option value="KRT">Knowledge Realty</option><option value="BAGMANE">Bagmane</option><option value="SECTOR">Sector, rules and tax</option>
-    </select></label>
-    <label>Topic<select class="dash-select" id="news-cat" data-draw="news-cat" aria-label="Filter news by topic" data-source="news"></select></label>
+<!-- OVERVIEW -->
+<section class="panel" id="tab-overview" role="tabpanel">
+  <div class="stats">
+    <div class="stat"><p class="cap">Combined market cap</p><p class="v">₹<span data-draw="k-mcap" data-source="market_summary" data-field="value" data-where="key=total_mcap_lakh_cr" class="dash-skeleton"></span> lakh cr</p></div>
+    <div class="stat"><p class="cap">Average trailing yield</p><p class="v"><span data-draw="k-wy" data-source="market_summary" data-field="value" data-where="key=wtd_yield_pct" class="dash-skeleton"></span>%</p><p class="cap">Weighted by market cap</p></div>
+    <div class="stat"><p class="cap">10-year G-sec</p><p class="v"><span data-draw="k-gsec" data-source="macro" data-field="value" data-where="metric=10-year G-sec yield" class="dash-skeleton"></span>%</p></div>
+    <div class="stat"><p class="cap">Average price to NAV</p><p class="v"><span data-draw="k-pnav" data-source="market_summary" data-field="value" data-where="key=avg_p_nav" class="dash-skeleton"></span>x</p><p class="cap">Below 1.0x means under asset value</p></div>
   </div>
-  <div data-draw="news" data-source="news"></div>
-</section>
 
-<section id="compare" class="card">
-  <h2>Side-by-side comparison</h2>
-  <p class="cap" style="margin-bottom:var(--cds-gap-md)">Click a column to sort. Trailing yield uses the last four quarterly payouts. Run-rate yield annualises the latest quarter. Bagmane listed in May 2026, so its trailing figure annualises two quarters.</p>
-  <div class="tw">
-    <table id="cmp-table" data-source="valuation" data-row-key="id">
-      <thead><tr>
-        <th data-field="short" data-k="short" class="l">REIT</th>
-        <th data-field="price" data-k="price">Price (₹)</th>
-        <th data-field="mcap_cr" data-k="mcap_cr">Mkt cap (₹ cr)</th>
-        <th data-field="ttm_dpu" data-k="ttm_dpu">Trailing DPU (₹)</th>
-        <th data-field="ttm_yield_pct" data-k="ttm_yield_pct" aria-sort="descending">Trailing yield %</th>
-        <th data-field="runrate_yield_pct" data-k="runrate_yield_pct">Run-rate yield %</th>
-        <th data-field="spread_bps" data-k="spread_bps">vs G-sec (bps)</th>
-        <th data-field="nav" data-k="nav">NAV (₹)</th>
-        <th data-field="p_nav" data-k="p_nav">Price / NAV</th>
-        <th data-field="occupancy_pct" data-k="occupancy_pct">Occupancy %</th>
-        <th data-field="wale_yrs" data-k="wale_yrs">WALE (yrs)</th>
-        <th data-field="ltv_pct" data-k="ltv_pct">LTV %</th>
-      </tr></thead>
-      <tbody data-draw="cmp"></tbody>
-    </table>
+  <div>
+    <div class="sec-head"><h2>The six listed REITs</h2><p class="cap">Trailing yield uses the last four quarterly payouts. Open a REIT to see every property it owns.</p></div>
+    <div class="cards" data-draw="cards" data-source="valuation holdings"></div>
+  </div>
+
+  <div>
+    <div class="sec-head"><h2>Latest news</h2></div>
+    <div data-draw="news-mini" data-source="news"></div>
+    <button type="button" class="rt-more" data-go="news">All news</button>
   </div>
 </section>
 
-<section class="grid2">
-  <div id="yield-chart" class="card">
-    <h2>Distribution yield vs the 10-year G-sec</h2>
-    <p class="cap">Bars show trailing yield. The dot marks the run-rate yield from the latest quarter. The dashed line is the 10-year G-sec.</p>
-    <div class="chart" data-draw="ychart" data-source="valuation macro" role="img" aria-label="Trailing and run-rate distribution yield of each REIT compared with the 10-year government bond yield"></div>
+<!-- HOLDINGS -->
+<section class="panel" id="tab-holdings" role="tabpanel" hidden>
+  <div>
+    <div class="sec-head"><h2>Where each REIT has invested</h2><p class="cap">Every property in the portfolio, from the Q2 FY27 disclosures. Pick a REIT.</p></div>
+    <div class="seg" data-draw="h-pick" data-source="fundamentals" role="group" aria-label="Choose a REIT"></div>
+    <div data-draw="h-sum" data-source="fundamentals valuation holdings"></div>
   </div>
-  <div id="pnav-chart" class="card">
-    <h2>Price to NAV</h2>
-    <p class="cap">Price divided by the latest independent valuation NAV per unit. The dashed line marks 1.0x.</p>
-    <div class="chart" data-draw="pchart" data-source="valuation" role="img" aria-label="Price to NAV ratio of each REIT"></div>
+  <div class="grid2">
+    <div>
+      <div class="sec-head"><h2>By city</h2><p class="cap">Share of portfolio value in each location.</p></div>
+      <div class="chart" data-draw="h-city" data-source="holdings" role="img" aria-label="Share of portfolio value by city for the selected REIT"></div>
+    </div>
+    <div>
+      <div class="sec-head"><h2>By asset type</h2><p class="cap">Share of portfolio value in offices, malls, hotels and solar.</p></div>
+      <div class="chart" data-draw="h-type" data-source="holdings" role="img" aria-label="Share of portfolio value by asset type for the selected REIT"></div>
+    </div>
   </div>
-</section>
-
-<section id="range" class="card">
-  <h2>Where each price sits in its 52-week range</h2>
-  <p class="cap">Left end is the 52-week low, right end the high. Bagmane's range runs from its May 2026 listing.</p>
-  <div class="chart" style="min-height:200px" data-draw="rchart" data-source="valuation" role="img" aria-label="Current unit price of each REIT within its 52-week low to high range"></div>
-</section>
-
-<section id="dpu-history" class="card">
-  <h2>Distribution per unit, quarter by quarter</h2>
-  <p class="cap" style="margin-bottom:var(--cds-gap-md)">₹ per unit declared each quarter, FY26 to FY27. Each panel has its own scale. Growth compares the latest quarter with the same quarter a year earlier.</p>
-  <div class="sm" data-draw="dpu" data-source="distributions dpu_growth"></div>
-</section>
-
-<section id="mix" class="card">
-  <h2>What the latest payout is made of</h2>
-  <p class="cap">Share of the Q2 FY27 distribution by component. The mix decides your tax, see the tax notes below.</p>
-  <div class="legend">
-    <span><i style="background:var(--rt-b2)"></i>Dividend</span>
-    <span><i style="background:var(--rt-b3)"></i>Interest</span>
-    <span><i style="background:var(--rt-b4)"></i>Repayment of debt</span>
-    <span><i style="background:var(--cds-chart-muted)"></i>Other income</span>
-  </div>
-  <div class="chart" style="min-height:240px" data-draw="mchart" data-source="fundamentals" role="img" aria-label="Distribution mix of each REIT split into dividend, interest, repayment of debt and other income"></div>
-</section>
-
-<section id="calculator" class="card">
-  <h2>Income estimator</h2>
-  <p class="cap" style="margin-bottom:var(--cds-gap-md)">Estimates a year of payouts at the trailing distribution per unit and the latest payout mix. Past payouts do not guarantee future ones. Tax is indicative only: dividend treated as exempt, interest and other income at your slab plus 4% cess, repayment of debt untaxed on receipt but lowering your cost.</p>
-  <div class="ctl">
-    <label>Amount to invest (₹)<input type="number" id="calc-amt" value="100000" min="1000" step="1000"></label>
-    <label>REIT<select class="dash-select" id="calc-reit" data-draw="calc-reit" aria-label="REIT" data-source="valuation"></select></label>
-    <label>Your tax slab<select class="dash-select" id="calc-slab" aria-label="Tax slab">
-      <option value="0">0%</option><option value="5">5%</option><option value="10">10%</option><option value="15">15%</option><option value="20">20%</option><option value="25">25%</option><option value="30" selected>30%</option>
-    </select></label>
-  </div>
-  <div class="out" data-draw="calc-out" data-source="valuation fundamentals"></div>
-</section>
-
-<section id="profile" class="card">
-  <h2>REIT profile</h2>
-  <div class="ctl"><label>Choose a REIT<select class="dash-select" id="prof-reit" data-draw="prof-reit" aria-label="REIT profile" data-source="fundamentals"></select></label></div>
-  <div data-draw="profile" data-source="fundamentals valuation"></div>
-</section>
-
-<section class="grid2">
-  <div id="macro" class="card">
-    <h2>Rates backdrop</h2>
-    <p class="cap" style="margin-bottom:var(--cds-gap-sm)">REIT yields are judged against bond yields. Rising rates raise borrowing costs for floating-rate debt and can pressure unit prices.</p>
-    <div class="tw"><table data-source="macro" data-row-key="metric">
-      <thead><tr><th data-field="metric" class="l">Metric</th><th data-field="value">Value %</th><th data-field="as_of">As of</th><th data-field="note" class="l">Note</th></tr></thead>
-      <tbody data-draw="macro-t"></tbody>
-    </table></div>
-  </div>
-  <div id="sm-reits" class="card">
-    <h2>Small and medium REITs (SM REITs)</h2>
-    <p class="cap" style="margin-bottom:var(--cds-gap-sm)">A separate SEBI category for single assets worth ₹50 to ₹500 crore. Units cost about ₹10 lakh each and trade rarely, so prices are not tracked here.</p>
-    <div class="tw"><table data-source="sm_reits" data-row-key="scheme">
-      <thead><tr><th data-field="scheme" class="l">Scheme</th><th data-field="asset" class="l">Asset</th><th data-field="issue_cr">Issue (₹ cr)</th><th data-field="listed">Listed</th></tr></thead>
-      <tbody data-draw="sm-t"></tbody>
+  <div>
+    <div class="sec-head"><h2>Property list</h2><p class="cap">Area in million sq ft (msf). Occupancy is committed occupancy. Sorted by share of value.</p></div>
+    <div class="tw"><table>
+      <thead><tr><th class="l">Property</th><th class="l">City</th><th class="l">Type</th><th>Area (msf)</th><th>Occupancy</th><th>Share of value</th></tr></thead>
+      <tbody data-draw="h-table" data-source="holdings"></tbody>
     </table></div>
   </div>
 </section>
 
-<section id="notes" style="display:flex;flex-direction:column;gap:var(--cds-gap-md)">
-  <details>
-    <summary>How to read these numbers</summary>
-    <ul>
-      <li><b>Distribution per unit (DPU):</b> cash paid per unit for a quarter. SEBI rules require REITs to pay out at least 90% of net distributable cash flow, usually every quarter.</li>
-      <li><b>Trailing yield:</b> last four quarters of DPU divided by today's price. It reflects what was paid, not what will be paid.</li>
-      <li><b>Run-rate yield:</b> latest quarter's DPU times four, divided by price. Useful when payouts are growing quickly.</li>
-      <li><b>NAV:</b> net asset value per unit from the half-yearly independent valuation. Price below NAV means the market values the units under the appraised worth of the properties net of debt.</li>
-      <li><b>Occupancy:</b> committed occupancy reported by each REIT. Office REITs report by area, some also by value. Nexus reports retail leasing occupancy.</li>
-      <li><b>WALE:</b> weighted average lease expiry, the average years left on leases. Longer means more locked-in rent.</li>
-      <li><b>LTV:</b> net debt to gross asset value as each REIT defines it. SEBI caps REIT borrowing at 49% of asset value, with extra conditions above 25%.</li>
-      <li><b>Spread vs G-sec:</b> trailing yield minus the 10-year government bond yield, in basis points. A negative spread means the payout yield alone is below the bond yield; REIT investors also expect DPU growth and price change.</li>
-    </ul>
-  </details>
-  <details>
-    <summary>How REIT payouts and gains are taxed (resident individuals)</summary>
-    <ul>
-      <li><b>Dividend:</b> exempt in your hands. The Taxation and Other Laws (Amendment) Act, 2026 keeps it exempt even when the underlying SPV opts for the concessional corporate tax regime.</li>
-      <li><b>Interest and rent:</b> taxed at your slab rate. TDS may be deducted by the REIT.</li>
-      <li><b>Repayment of debt:</b> not taxed when received, but it reduces your cost of acquisition. Receipts beyond your cost can become taxable.</li>
-      <li><b>Selling units:</b> held up to 12 months, short-term gains taxed at 20%. Held longer, long-term gains above ₹1.25 lakh a year taxed at 12.5%.</li>
-      <li>Each REIT publishes the break-up with every payout. Tax rules change and individual situations differ, so confirm with a tax professional before acting.</li>
-    </ul>
-  </details>
-  <details>
-    <summary>What changed for REITs in 2026</summary>
-    <ul>
-      <li>SEBI reclassified REIT units as equity from 1 January 2026, widening mutual fund participation.</li>
-      <li>Bagmane Prime Office REIT listed on 14 May 2026 at ₹103.50 against an issue price of ₹100, the sixth listed REIT.</li>
-      <li>RBI raised the repo rate by 25 bps to 5.50% on 7 October 2026 and moved to a calibrated tightening stance. The next policy review is 2 to 4 December 2026.</li>
-      <li>Q3 FY27 results (October to December quarter) usually arrive between late January and mid February.</li>
-    </ul>
-  </details>
-  <details>
-    <summary>Sources</summary>
-    <ul>
-      <li>Q2 FY27 earnings presentations and press releases: <a href="https://www.embassyofficeparks.com/wp-content/uploads/2026/10/Earnings-Presentation-Q2-FY27_VF.pdf" target="_blank" rel="noopener">Embassy</a>, <a href="https://www.mindspacereit.com/wp-content/uploads/2026/11/Investor-Presentation_Q2-FY27.pdf" target="_blank" rel="noopener">Mindspace</a>, <a href="https://files.brookfieldindiareit.in/Investor_Earnings_Presentation_Q2_2027_5a875fc11c.pdf" target="_blank" rel="noopener">Brookfield</a>, <a href="https://nsearchives.nseindia.com/corporate/NXST_03112026160224_NXST_PR_and_EP.pdf" target="_blank" rel="noopener">Nexus Select</a>, <a href="https://nsearchives.nseindia.com/corporate/KRT_03112026145446_PressReleaseEarningPresentation.pdf" target="_blank" rel="noopener">Knowledge Realty</a>, <a href="https://nsearchives.nseindia.com/corporate/BAGMANE_02112026215954_BagmaneREITPressReleaseEarningsUpdateandSD.pdf" target="_blank" rel="noopener">Bagmane</a>.</li>
-      <li>Earlier quarterly distributions: each REIT's quarterly press releases (FY26 and Q1 FY27).</li>
-      <li>Unit prices: <a href="https://www.indmoney.com/stocks/sectors/reit" target="_blank" rel="noopener">INDmoney REIT page</a> and <a href="https://www.screener.in/" target="_blank" rel="noopener">Screener.in</a>.</li>
-      <li>Rates: <a href="https://rbi.org.in/scriptS/BS_PressReleaseDisplay.aspx?prid=63742" target="_blank" rel="noopener">RBI Monetary Policy Statement, 7 Oct 2026</a>; 10-year G-sec from market reports.</li>
-    </ul>
-  </details>
+<!-- COMPARE -->
+<section class="panel" id="tab-compare" role="tabpanel" hidden>
+  <div>
+    <div class="sec-head"><h2>Side by side</h2><p class="cap">Click a column to sort. Bagmane listed in May 2026, so its trailing yield annualises two quarters.</p></div>
+    <div class="tw">
+      <table id="cmp-table" data-source="valuation" data-row-key="id">
+        <thead><tr>
+          <th data-field="short" data-k="short" class="l">REIT</th>
+          <th data-field="price" data-k="price">Price (₹)</th>
+          <th data-field="mcap_cr" data-k="mcap_cr">Mkt cap (₹ cr)</th>
+          <th data-field="ttm_yield_pct" data-k="ttm_yield_pct" aria-sort="descending">Trailing yield</th>
+          <th data-field="spread_bps" data-k="spread_bps">vs G-sec (bps)</th>
+          <th data-field="p_nav" data-k="p_nav">Price / NAV</th>
+          <th data-field="occupancy_pct" data-k="occupancy_pct">Occupancy</th>
+          <th data-field="wale_yrs" data-k="wale_yrs">WALE (yrs)</th>
+          <th data-field="ltv_pct" data-k="ltv_pct">LTV</th>
+        </tr></thead>
+        <tbody data-draw="cmp"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="grid2">
+    <div>
+      <div class="sec-head"><h2>Yield vs the 10-year G-sec</h2><p class="cap">Bars show trailing yield, the dot the run-rate from the latest quarter, the dashed line the G-sec.</p></div>
+      <div class="chart" data-draw="ychart" data-source="valuation macro" role="img" aria-label="Trailing and run-rate distribution yield of each REIT compared with the 10-year government bond yield"></div>
+    </div>
+    <div>
+      <div class="sec-head"><h2>Price to NAV</h2><p class="cap">Unit price divided by the latest independent valuation. The dashed line marks 1.0x.</p></div>
+      <div class="chart" data-draw="pchart" data-source="valuation" role="img" aria-label="Price to NAV ratio of each REIT"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYOUTS -->
+<section class="panel" id="tab-payouts" role="tabpanel" hidden>
+  <div>
+    <div class="sec-head"><h2>Distribution per unit, by quarter</h2><p class="cap">₹ per unit declared each quarter. Each panel has its own scale. Growth compares the latest quarter with a year earlier.</p></div>
+    <div class="sm" data-draw="dpu" data-source="distributions dpu_growth"></div>
+  </div>
+  <div>
+    <div class="sec-head"><h2>What the latest payout is made of</h2><p class="cap">The mix decides your tax. See Learn for how each part is taxed.</p></div>
+    <div class="legend">
+      <span><i style="background:var(--rt-b2)"></i>Dividend</span>
+      <span><i style="background:var(--rt-b3)"></i>Interest</span>
+      <span><i style="background:var(--rt-b4)"></i>Repayment of debt</span>
+      <span><i style="background:var(--cds-chart-muted)"></i>Other income</span>
+    </div>
+    <div class="chart" style="min-height:220px" data-draw="mchart" data-source="fundamentals" role="img" aria-label="Distribution mix of each REIT split into dividend, interest, repayment of debt and other income"></div>
+  </div>
+  <div>
+    <div class="sec-head"><h2>Income estimator</h2><p class="cap">A year of payouts at the trailing distribution per unit. Past payouts do not guarantee future ones, and the tax figure is indicative.</p></div>
+    <div class="ctl">
+      <label>Amount to invest (₹)<input type="number" id="calc-amt" value="100000" min="1000" step="1000"></label>
+      <label>REIT<select class="dash-select" id="calc-reit" data-draw="calc-reit" aria-label="REIT" data-source="valuation"></select></label>
+      <label>Your tax slab<select class="dash-select" id="calc-slab" aria-label="Tax slab">
+        <option value="0">0%</option><option value="5">5%</option><option value="10">10%</option><option value="15">15%</option><option value="20">20%</option><option value="25">25%</option><option value="30" selected>30%</option>
+      </select></label>
+    </div>
+    <div class="out" data-draw="calc-out" data-source="valuation fundamentals"></div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section class="panel" id="tab-news" role="tabpanel" hidden>
+  <div>
+    <div class="sec-head"><h2>REIT news</h2><p class="cap">Results, payouts, deals, debt, index changes, rules and tax from the last three months, newest first.</p></div>
+    <div class="ctl">
+      <label>REIT<select class="dash-select" id="news-reit" aria-label="Filter news by REIT">
+        <option value="">All REITs and sector</option><option value="EMBASSY">Embassy</option><option value="MINDSPACE">Mindspace</option><option value="BIRET">Brookfield</option><option value="NXST">Nexus Select</option><option value="KRT">Knowledge Realty</option><option value="BAGMANE">Bagmane</option><option value="SECTOR">Sector, rules and tax</option>
+      </select></label>
+      <label>Topic<select class="dash-select" id="news-cat" data-draw="news-cat" aria-label="Filter news by topic" data-source="news"></select></label>
+    </div>
+    <div data-draw="news" data-source="news"></div>
+  </div>
+</section>
+
+<!-- LEARN -->
+<section class="panel" id="tab-learn" role="tabpanel" hidden>
+  <div class="grid2">
+    <div>
+      <div class="sec-head"><h2>Rates backdrop</h2><p class="cap">REIT yields are judged against bond yields. Higher rates raise borrowing costs and can weigh on prices.</p></div>
+      <div class="tw"><table data-source="macro" data-row-key="metric">
+        <thead><tr><th data-field="metric" class="l">Metric</th><th data-field="value">Value</th><th data-field="as_of">As of</th></tr></thead>
+        <tbody data-draw="macro-t"></tbody>
+      </table></div>
+    </div>
+    <div>
+      <div class="sec-head"><h2>Small and medium REITs</h2><p class="cap">A separate SEBI category for single assets worth ₹50 to ₹500 crore. Units cost about ₹10 lakh and trade rarely.</p></div>
+      <div class="tw"><table data-source="sm_reits" data-row-key="scheme">
+        <thead><tr><th data-field="scheme" class="l">Scheme</th><th data-field="asset" class="l">Asset</th><th data-field="issue_cr">Issue (₹ cr)</th></tr></thead>
+        <tbody data-draw="sm-t"></tbody>
+      </table></div>
+    </div>
+  </div>
+  <div>
+    <details open>
+      <summary>How to read these numbers</summary>
+      <ul>
+        <li><b>Distribution per unit (DPU):</b> cash paid per unit for a quarter. SEBI rules require REITs to pay out at least 90% of net distributable cash flow, usually every quarter.</li>
+        <li><b>Trailing yield:</b> last four quarters of DPU divided by today's price. It reflects what was paid, not what will be paid.</li>
+        <li><b>Run-rate yield:</b> latest quarter's DPU times four, divided by price.</li>
+        <li><b>NAV:</b> net asset value per unit from the half-yearly independent valuation. Price below NAV means the market values the units under the appraised worth of the properties net of debt.</li>
+        <li><b>Occupancy:</b> committed occupancy reported by each REIT. Nexus reports retail leasing occupancy.</li>
+        <li><b>WALE:</b> weighted average lease expiry, the average years left on leases. Longer means more locked-in rent.</li>
+        <li><b>LTV:</b> net debt to gross asset value as each REIT defines it. SEBI caps REIT borrowing at 49% of asset value.</li>
+        <li><b>Share of value:</b> each property's part of the REIT's gross asset value. Where a REIT does not split a property out, the table says n/a.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>How REIT payouts and gains are taxed (resident individuals)</summary>
+      <ul>
+        <li><b>Dividend:</b> exempt in your hands. The Taxation and Other Laws (Amendment) Act, 2026 keeps it exempt even when the underlying SPV opts for the concessional corporate tax regime.</li>
+        <li><b>Interest and rent:</b> taxed at your slab rate. TDS may be deducted by the REIT.</li>
+        <li><b>Repayment of debt:</b> not taxed when received, but it reduces your cost of acquisition.</li>
+        <li><b>Selling units:</b> held up to 12 months, short-term gains taxed at 20%. Held longer, long-term gains above ₹1.25 lakh a year taxed at 12.5%.</li>
+        <li>Tax rules change and individual situations differ, so confirm with a tax professional before acting.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>What changed for REITs in 2026</summary>
+      <ul>
+        <li>SEBI reclassified REIT units as equity from 1 January 2026, widening mutual fund participation.</li>
+        <li>Bagmane Prime Office REIT listed on 14 May 2026 at ₹103.50 against an issue price of ₹100, the sixth listed REIT.</li>
+        <li>RBI raised the repo rate by 25 bps to 5.50% on 7 October 2026. The next policy review is 2 to 4 December 2026.</li>
+        <li>Q3 FY27 results usually arrive between late January and mid February.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>Sources</summary>
+      <ul>
+        <li>Q2 FY27 earnings presentations: <a href="https://www.embassyofficeparks.com/wp-content/uploads/2026/10/Earnings-Presentation-Q2-FY27_VF.pdf" target="_blank" rel="noopener">Embassy</a>, <a href="https://www.mindspacereit.com/wp-content/uploads/2026/11/Investor-Presentation_Q2-FY27.pdf" target="_blank" rel="noopener">Mindspace</a>, <a href="https://files.brookfieldindiareit.in/Investor_Earnings_Presentation_Q2_2027_5a875fc11c.pdf" target="_blank" rel="noopener">Brookfield</a>, <a href="https://nsearchives.nseindia.com/corporate/NXST_03112026160224_NXST_PR_and_EP.pdf" target="_blank" rel="noopener">Nexus Select</a>, <a href="https://nsearchives.nseindia.com/corporate/KRT_03112026145446_PressReleaseEarningPresentation.pdf" target="_blank" rel="noopener">Knowledge Realty</a>, <a href="https://nsearchives.nseindia.com/corporate/BAGMANE_02112026215954_BagmaneREITPressReleaseEarningsUpdateandSD.pdf" target="_blank" rel="noopener">Bagmane</a>. Property lists, areas, occupancy and value shares come from the same documents.</li>
+        <li>Earlier quarterly distributions: each REIT's quarterly press releases.</li>
+        <li>Unit prices: <a href="https://www.indmoney.com/stocks/sectors/reit" target="_blank" rel="noopener">INDmoney REIT page</a> and <a href="https://www.screener.in/" target="_blank" rel="noopener">Screener.in</a>.</li>
+        <li>Rates: <a href="https://rbi.org.in/scriptS/BS_PressReleaseDisplay.aspx?prid=63742" target="_blank" rel="noopener">RBI Monetary Policy Statement, 7 Oct 2026</a>; 10-year G-sec from market reports.</li>
+      </ul>
+    </details>
+  </div>
 </section>
 
 <footer class="foot">
@@ -270,7 +347,6 @@ window.RT = (function(){
   const f1 = (v)=> v==null||isNaN(v) ? 'n/a' : (+v).toFixed(1);
   const dfmt = d3.utcFormat('%-d %b %Y');
   const date = (s)=> { if(!s) return 'n/a'; const d = new Date(s+'T00:00:00Z'); return isNaN(d) ? s : dfmt(d); };
-  const r2 = (v)=> v==null||!isFinite(v) ? null : Math.round(v*100)/100;
   function tip(box){
     let t = box.querySelector(':scope > .rt-tip');
     if(!t){ t = document.createElement('div'); t.className='rt-tip'; t.hidden=true; box.appendChild(t); }
@@ -290,7 +366,27 @@ window.RT = (function(){
   }
   function failed(el, msg){ const d=document.createElement('p'); d.className='fail'; d.textContent=msg||'Failed to load'; el.replaceChildren(d); }
   function textW(svg, s, size){ const t=svg.append('text').attr('font-size',size||11).text(s); const w=t.node().getComputedTextLength(); t.remove(); return w; }
-  return {f0,f1,f2,date,r2,tip,failed,textW,state:{sortKey:'ttm_yield_pct',sortDir:-1,prof:null}};
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const city = (c) => String(c || '').replace(/\s*\(.*\)$/, '');
+  const kind = (t) => t === 'Office park' || t === 'Office building' ? 'Office' : (t || 'Other');
+  // Holdings view helpers
+  function counts(rows){
+    const n = {Office:0, Mall:0, Hotel:0, Solar:0};
+    rows.forEach(r => { const k = kind(r.type); if (k in n) n[k] += (r.count ?? 1); });
+    const parts = [];
+    if (n.Office) parts.push(n.Office + (n.Office === 1 ? ' office asset' : ' office assets'));
+    if (n.Mall) parts.push(n.Mall === 1 ? 'a mall' : n.Mall + ' malls');
+    if (n.Hotel) parts.push(n.Hotel + (n.Hotel === 1 ? ' hotel' : ' hotel assets'));
+    if (n.Solar) parts.push(n.Solar === 1 ? 'a solar park' : n.Solar + ' solar parks');
+    return parts;
+  }
+  function byCity(rows){
+    const m = new Map();
+    rows.forEach(r => { if (r.value_share_pct == null) return; const c = city(r.city); if (c === 'Multiple cities' || c === 'Location not stated') return; m.set(c, (m.get(c) || 0) + r.value_share_pct); });
+    return [...m].map(([k,v]) => ({label:k, v: Math.round(v*10)/10})).sort((a,b) => b.v - a.v);
+  }
+  const listJoin = (a) => a.length < 2 ? a.join('') : a.slice(0,-1).join(', ') + ' and ' + a[a.length-1];
+  return {f0,f1,f2,date,tip,failed,textW,el,city,kind,counts,byCity,listJoin,state:{sortKey:'ttm_yield_pct',sortDir:-1,hold:'EMBASSY',newsAll:false}};
 })();
 </script>
 
@@ -313,7 +409,7 @@ dash.calc('valuation', {
       const mid = (f.guide_low != null && f.guide_high != null) ? (f.guide_low + f.guide_high) / 2 : null;
       const lo = Number(p.low_52w), hi = Number(p.high_52w);
       return {
-        id: f.id, short: f.short, asset_type: f.asset_type, price: r2(price), price_date: p.price_date,
+        id: f.id, short: f.short, name: f.name, asset_type: f.asset_type, price: r2(price), price_date: p.price_date,
         mcap_cr: Math.round(price * f.units_mn / 10),
         ttm_dpu: r2(ttm), ttm_quarters: d.length,
         ttm_yield_pct: r2(ttmY),
@@ -370,6 +466,27 @@ dash.calc('dpu_growth', {
 </script>
 
 <script>
+/* Tabs */
+(function(){
+  const R = window.RT;
+  const tabs = [...document.querySelectorAll('.rt .tabs [role=tab]')];
+  function show(name, push){
+    if (!document.getElementById('tab-' + name)) name = 'overview';
+    tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+    document.querySelectorAll('.rt .panel').forEach(p => { p.hidden = p.id !== 'tab-' + name; });
+    if (push !== false) { try { history.replaceState(null, '', '#' + name); } catch (e) {} }
+    if (window.dash && dash.redraw) dash.redraw();
+  }
+  R.show = show;
+  tabs.forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
+  document.addEventListener('click', ev => { const g = ev.target.closest('[data-go]'); if (g) { show(g.dataset.go); window.scrollTo(0, 0); } });
+  const h = (location.hash || '').slice(1);
+  if (h) show(h, false);
+})();
+</script>
+
+<script>
+/* Header and key numbers */
 (function(){
   const R = window.RT;
   const ms = (key, field) => { const s = dash.data('market_summary'); if (s.status !== 'ok' || !s.data) return null; const r = s.data.find(x => x.key === key); return r ? r[field] : null; };
@@ -378,32 +495,191 @@ dash.calc('dpu_growth', {
   dash.draw('tk-top', el => { const s=dash.data('market_summary'); put(el, ms('top_yield_name','text'), s.status); });
   dash.draw('tk-topy', el => { const s=dash.data('market_summary'); const v=ms('top_yield_pct','value'); put(el, v==null?null:R.f2(v), s.status); });
   dash.draw('tk-gsec', el => { const s=dash.data('macro'); const v=mac('10-year G-sec yield'); put(el, v==null?null:R.f2(v), s.status); });
-  dash.draw('tk-below', el => { const s=dash.data('market_summary'); const v=ms('below_nav_count','value'); put(el, v==null?null:String(v), s.status); });
+  dash.draw('tk-below', el => { const s=dash.data('market_summary'); const v=ms('below_nav_count','value'); if (v == null) { put(el, null, s.status); return; }
+    const total = (dash.data('valuation').data || []).length || 6;
+    el.classList.remove('dash-skeleton');
+    const b = document.createElement('b'); b.textContent = v === total ? 'All ' + total : String(v);
+    el.replaceChildren(b, v === total ? ' listed REITs trade below their latest NAV.' : ' of the ' + total + ' listed REITs trade below their latest NAV.'); });
   dash.draw('asof', el => { const s=dash.data('prices'); const d = s.status==='ok' && s.data.length ? s.data.map(r=>r.price_date).sort().pop() : null; put(el, d?R.date(d):null, s.status); });
   dash.draw('k-mcap', el => { const s=dash.data('market_summary'); const v=ms('total_mcap_lakh_cr','value'); put(el, v==null?null:R.f2(v), s.status); });
   dash.draw('k-wy', el => { const s=dash.data('market_summary'); const v=ms('wtd_yield_pct','value'); put(el, v==null?null:R.f2(v), s.status); });
   dash.draw('k-gsec', el => { const s=dash.data('macro'); const v=mac('10-year G-sec yield'); put(el, v==null?null:R.f2(v), s.status); });
-  dash.draw('k-repo', el => { const s=dash.data('macro'); const v=mac('RBI repo rate'); put(el, v==null?null:R.f2(v), s.status); });
   dash.draw('k-pnav', el => { const s=dash.data('market_summary'); const v=ms('avg_p_nav','value'); put(el, v==null?null:R.f2(v), s.status); });
 })();
 </script>
 
 <script>
+/* Overview cards and mini news */
+(function(){
+  const R = window.RT, E = R.el;
+  dash.draw('cards', box => {
+    const v = dash.data('valuation'), h = dash.data('holdings');
+    if (v.status === 'error') return R.failed(box);
+    if (v.status !== 'ok' || h.status !== 'ok' || !v.data) { box.replaceChildren(); return; }
+    const rows = v.data.slice().sort((a,b) => b.mcap_cr - a.mcap_cr);
+    box.replaceChildren(...rows.map(r => {
+      const hs = h.data.filter(x => x.reit === r.id);
+      const c = E('article', 'rcard'); c.setAttribute('data-id', r.id);
+      const top = E('div', 'top'); top.append(E('h3', null, r.short), E('span', 'type', r.asset_type));
+      const nums = E('div', 'nums');
+      [['Yield', R.f2(r.ttm_yield_pct) + '%'], ['Price / NAV', R.f2(r.p_nav) + 'x'], ['Occupancy', R.f1(r.occupancy_pct) + '%']].forEach(([k, val]) => {
+        const d = E('div'); d.append(E('p', 'cap', k), E('p', 'v', val)); nums.appendChild(d);
+      });
+      const cities = R.byCity(hs).filter(x => x.v >= 5).slice(0, 3).map(x => x.label);
+      const owns = E('p', 'owns');
+      owns.textContent = 'Owns ' + R.listJoin(R.counts(hs)) + (cities.length ? '. Most of the value is in ' + R.listJoin(cities) + '.' : '.');
+      const b = E('button', 'link-btn', 'See all holdings'); b.type = 'button';
+      b.onclick = () => { R.state.hold = r.id; R.show('holdings'); window.scrollTo(0, 0); };
+      c.append(top, E('p', 'cap', '₹' + R.f2(r.price) + ' per unit · ₹' + R.f0(r.mcap_cr) + ' cr market cap'), nums, owns, b);
+      return c;
+    }));
+  });
+  dash.draw('news-mini', box => {
+    const s = dash.data('news');
+    if (s.status === 'error') return R.failed(box);
+    if (s.status !== 'ok') { box.replaceChildren(); return; }
+    const rows = s.data.slice().sort((a,b) => String(b.date).localeCompare(String(a.date))).slice(0, 3);
+    const ol = E('ol', 'news-list');
+    rows.forEach(r => {
+      const li = E('li', 'news-item');
+      const body = E('div');
+      body.append(E('p', 'news-tags', [r.reit_label, r.category].filter(Boolean).join(' · ')));
+      const h = E('h3'); const a = E('a', null, r.headline); a.href = r.url || '#'; a.target = '_blank'; a.rel = 'noopener'; h.appendChild(a);
+      body.appendChild(h);
+      li.append(E('div', 'news-date', R.date(r.date)), body); ol.appendChild(li);
+    });
+    box.replaceChildren(ol);
+  });
+})();
+</script>
+
+<script>
+/* Holdings */
+(function(){
+  const R = window.RT, E = R.el;
+  const cur = () => R.state.hold;
+  dash.draw('h-pick', box => {
+    const fu = dash.data('fundamentals');
+    if (fu.status !== 'ok') { box.replaceChildren(); return; }
+    box.replaceChildren(...fu.data.map(f => {
+      const b = E('button', null, f.short); b.type = 'button'; b.setAttribute('aria-pressed', String(f.id === cur()));
+      b.onclick = () => { R.state.hold = f.id; ['h-pick','h-sum','h-city','h-type','h-table'].forEach(n => dash.draw(n)); };
+      return b;
+    }));
+  });
+  dash.draw('h-sum', box => {
+    const fu = dash.data('fundamentals'), v = dash.data('valuation'), h = dash.data('holdings');
+    if (fu.status === 'error' || h.status === 'error') return R.failed(box);
+    if (fu.status !== 'ok' || v.status !== 'ok' || h.status !== 'ok' || !v.data) { box.replaceChildren(); return; }
+    const f = fu.data.find(x => x.id === cur()) || fu.data[0];
+    const r = v.data.find(x => x.id === f.id) || {};
+    const hs = h.data.filter(x => x.reit === f.id);
+    const t = E('div', 'h-title'); t.append(E('h2', null, f.name), E('span', 'cap', 'NSE: ' + f.id + ' · Sponsor: ' + f.sponsor));
+    const intro = E('p', null, 'Owns ' + R.listJoin(R.counts(hs)) + ' across ' + R.byCity(hs).length + ' locations.');
+    intro.style.maxWidth = '70ch';
+    const stats = E('div', 'h-stats');
+    [['Gross asset value', '₹' + R.f0(f.gav_cr) + ' cr'], ['Leasable area', f.completed_msf + ' msf', f.total_msf > f.completed_msf ? (Math.round((f.total_msf - f.completed_msf) * 10) / 10) + ' msf more being built' : null],
+     ['Occupancy', R.f1(f.occupancy_pct) + '%'], ['WALE', R.f1(f.wale_yrs) + ' years']].forEach(([k, val, note]) => {
+      const d = E('div'); d.append(E('p', 'cap', k), E('p', 'v', val)); if (note) d.append(E('p', 'cap', note)); stats.appendChild(d);
+    });
+    const det = E('details'); det.style.marginTop = '12px';
+    det.appendChild(E('summary', null, 'More about this REIT'));
+    const dl = E('dl', 'kv');
+    const add = (k, val) => dl.append(E('dt', null, k), E('dd', null, val));
+    add('Listed', R.date(f.listed) + ' at ₹' + f.ipo_price + ' (' + (r.since_ipo_pct >= 0 ? '+' : '') + R.f2(r.since_ipo_pct) + '% since, excluding payouts)');
+    add('Occupancy detail', f.occupancy_note);
+    if (f.in_place_rent) add('In-place rent', '₹' + f.in_place_rent + ' per sq ft per month');
+    add('NAV per unit', '₹' + R.f2(f.nav) + ' (price / NAV ' + R.f2(r.p_nav) + 'x)');
+    add('Debt', 'LTV ' + f.ltv_pct + '%, average cost ' + f.cost_of_debt_pct + '%, rated ' + f.rating);
+    add(f.q_label + ' results', 'Revenue ₹' + R.f0(f.q_rev_cr) + ' cr, NOI ₹' + R.f0(f.q_noi_cr) + ' cr, payout ₹' + R.f0(f.q_dist_cr) + ' cr (₹' + f.q_dpu + ' per unit)');
+    add('Guidance', f.guidance);
+    const a = E('a', null, 'Latest results document'); a.href = f.source_url; a.target = '_blank'; a.rel = 'noopener';
+    const dd = E('dd'); dd.appendChild(a); dl.append(E('dt', null, 'Source'), dd);
+    det.appendChild(dl);
+    box.replaceChildren(t, intro, stats, det);
+  });
+  function bars(el, rows, aria, tipFn){
+    const W = Math.max(280, el.clientWidth), rowH = 30, top = 4, H = top + rows.length * rowH + 4;
+    el.replaceChildren();
+    const svg = d3.select(el).append('svg').attr('width','100%').attr('viewBox',`0 0 ${W} ${H}`).attr('role','img').attr('aria-label', aria);
+    const lw = (d3.max(rows, r => R.textW(svg, r.label, 12)) || 40) + 12;
+    const vw = R.textW(svg, '100%', 11) + 10;
+    const x = d3.scaleLinear().domain([0, Math.max(10, d3.max(rows, r => r.v) || 0)]).range([lw, W - vw]);
+    const t = R.tip(el);
+    const g = svg.selectAll('g').data(rows).join('g').attr('transform', (r,i) => `translate(0,${top + i*rowH})`);
+    g.append('text').attr('x', 0).attr('y', rowH/2).attr('dy','0.35em').attr('font-size',12).style('fill', r => r.muted ? 'var(--cds-text-secondary)' : 'var(--color-fg)').text(r => r.label);
+    g.append('rect').attr('x', lw).attr('y', 6).attr('height', rowH - 12).attr('width', r => Math.max(1, x(r.v) - lw))
+      .style('fill', r => r.muted ? 'var(--cds-chart-muted)' : (r.color || 'var(--rt-b1)'))
+      .on('mousemove', (ev, r) => t.show(ev, tipFn(r))).on('mouseleave', () => t.hide());
+    g.append('text').attr('x', r => x(r.v) + 5).attr('y', rowH/2).attr('dy','0.35em').attr('font-size',11).attr('class','num').style('fill','var(--color-fg)').text(r => R.f1(r.v) + '%');
+  }
+  dash.draw('h-city', el => {
+    const h = dash.data('holdings');
+    if (h.status === 'error') return R.failed(el);
+    if (h.status !== 'ok') { el.replaceChildren(); return; }
+    const hs = h.data.filter(x => x.reit === cur());
+    const rows = R.byCity(hs);
+    const known = rows.reduce((s,r) => s + r.v, 0);
+    const part = (c) => hs.filter(x => x.value_share_pct != null && R.city(x.city) === c).reduce((s,x) => s + x.value_share_pct, 0);
+    const svc = part('Multiple cities'), ns = part('Location not stated');
+    const gap = Math.round((100 - known - svc - ns) * 10) / 10;
+    if (svc > 0.05) rows.push({label: 'Services businesses', v: Math.round(svc*10)/10, muted: true});
+    if (ns > 0.05) rows.push({label: 'Location not stated', v: Math.round(ns*10)/10, muted: true});
+    if (gap >= 1) rows.push({label: 'Not split out', v: gap, muted: true});
+    bars(el, rows, 'Share of portfolio value by city', r => [r.label, R.f1(r.v) + '% of portfolio value'].concat(r.label === 'Not split out' ? ['Assets the REIT does not value separately in its disclosures'] : []));
+  });
+  dash.draw('h-type', el => {
+    const h = dash.data('holdings');
+    if (h.status === 'error') return R.failed(el);
+    if (h.status !== 'ok') { el.replaceChildren(); return; }
+    const hs = h.data.filter(x => x.reit === cur());
+    const names = {Office:'Offices', Mall:'Malls', Hotel:'Hotels', Solar:'Solar', Other:'Services businesses'};
+    const cols = {Office:'var(--rt-b1)', Mall:'var(--rt-b2)', Hotel:'var(--rt-b3)', Solar:'var(--rt-b4)', Other:'var(--cds-chart-muted)'};
+    const m = new Map();
+    hs.forEach(x => { if (x.value_share_pct == null) return; const k = R.kind(x.type); m.set(k, (m.get(k) || 0) + x.value_share_pct); });
+    const rows = [...m].map(([k,v]) => ({label: names[k] || k, v: Math.round(v*10)/10, color: cols[k]})).sort((a,b) => b.v - a.v);
+    const known = rows.reduce((s,r) => s + r.v, 0);
+    if (100 - known >= 1) rows.push({label: 'Not split out', v: Math.round((100 - known)*10)/10, muted: true});
+    bars(el, rows, 'Share of portfolio value by asset type', r => [r.label, R.f1(r.v) + '% of portfolio value']);
+  });
+  dash.draw('h-table', tb => {
+    const h = dash.data('holdings');
+    if (h.status !== 'ok') { tb.replaceChildren(); return; }
+    const rows = h.data.filter(x => x.reit === cur()).sort((a,b) => (b.value_share_pct ?? -1) - (a.value_share_pct ?? -1) || (b.completed_msf ?? 0) - (a.completed_msf ?? 0));
+    tb.replaceChildren(...rows.map(r => {
+      const tr = E('tr');
+      const n = E('td', 'l name wrap', r.asset); if (r.note) n.appendChild(E('span', 'sub', r.note));
+      const k = R.kind(r.type);
+      const ty = E('td', 'l'); ty.appendChild(E('span', 'pill ' + k, k === 'Other' ? 'Services' : r.type));
+      let area;
+      if (r.completed_msf != null) {
+        area = E('td', null, R.f1(r.completed_msf));
+        if (r.total_msf != null && r.total_msf - r.completed_msf >= 0.05) area.appendChild(E('span', 'sub', '+' + R.f1(r.total_msf - r.completed_msf) + ' being built'));
+      } else area = E('td', 'wrap', r.size || 'n/a');
+      if (r.completed_msf == null) { area.style.textAlign = 'right'; area.style.minWidth = '160px'; }
+      tr.append(n, E('td', 'l', r.city), ty, area,
+        E('td', null, r.occupancy_pct == null ? 'n/a' : R.f1(r.occupancy_pct) + '%'),
+        E('td', null, r.value_share_pct == null ? 'n/a' : R.f1(r.value_share_pct) + '%'));
+      return tr;
+    }));
+  });
+})();
+</script>
+
+<script>
+/* Compare */
 (function(){
   const R = window.RT;
   const cols = [
     ['short', r => r.short, 'l name'],
     ['price', r => R.f2(r.price)],
     ['mcap_cr', r => R.f0(r.mcap_cr)],
-    ['ttm_dpu', r => R.f2(r.ttm_dpu)],
-    ['ttm_yield_pct', r => R.f2(r.ttm_yield_pct)],
-    ['runrate_yield_pct', r => R.f2(r.runrate_yield_pct)],
+    ['ttm_yield_pct', r => R.f2(r.ttm_yield_pct) + '%'],
     ['spread_bps', r => r.spread_bps == null ? 'n/a' : (r.spread_bps > 0 ? '+' : '') + r.spread_bps],
-    ['nav', r => R.f2(r.nav)],
-    ['p_nav', r => R.f2(r.p_nav)],
-    ['occupancy_pct', r => R.f1(r.occupancy_pct)],
+    ['p_nav', r => R.f2(r.p_nav) + 'x'],
+    ['occupancy_pct', r => R.f1(r.occupancy_pct) + '%'],
     ['wale_yrs', r => R.f1(r.wale_yrs)],
-    ['ltv_pct', r => R.f1(r.ltv_pct)]
+    ['ltv_pct', r => R.f1(r.ltv_pct) + '%']
   ];
   document.querySelectorAll('#cmp-table th[data-k]').forEach(th => {
     th.addEventListener('click', () => {
@@ -423,19 +699,13 @@ dash.calc('dpu_growth', {
       const tr = document.createElement('tr'); tr.setAttribute('data-key', r.id);
       cols.forEach(([key, fmt, cls]) => {
         const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = fmt(r);
-        if (key === 'short') { const t=document.createElement('span'); t.className='tag'; t.textContent=r.asset_type; td.appendChild(t); }
         if (key === 'spread_bps' && r.spread_bps != null) td.classList.add(r.spread_bps >= 0 ? 'good' : 'bad');
         tr.appendChild(td);
       });
       return tr;
     }));
   });
-})();
-</script>
 
-<script>
-(function(){
-  const R = window.RT;
   function hbars(el, rows, o){
     const W = Math.max(280, el.clientWidth);
     const rowH = 34, top = 8, bottom = 26;
@@ -444,24 +714,27 @@ dash.calc('dpu_growth', {
     const svg = d3.select(el).append('svg').attr('width','100%').attr('viewBox',`0 0 ${W} ${H}`).attr('role','img').attr('aria-label', o.aria);
     const lw = d3.max(rows, r => R.textW(svg, r.label, 12)) + 10;
     const vw = R.textW(svg, o.fmt(d3.max(rows, r => r.v)), 11) + 8;
-    const x = d3.scaleLinear().domain([o.min ?? 0, o.max]).range([lw, W - vw - 4]).nice();
-    const y = d3.scaleBand().domain(rows.map(r => r.label)).range([top, H - bottom]).padding(0.28);
-    const gx = svg.append('g').attr('class','axis').attr('transform',`translate(0,${H-bottom})`).call(d3.axisBottom(x).ticks(Math.max(2, Math.floor((W-lw)/80))).tickSize(0).tickPadding(6));
+    const x = d3.scaleLinear().domain([0, o.max]).range([lw, W - vw - 4]).nice();
+    const y = d3.scaleBand().domain(rows.map(r => r.label)).range([top, H - bottom]).padding(0.3);
+    const nt = Math.max(2, Math.floor((W-lw)/90));
+    const gx = svg.append('g').attr('class','axis').attr('transform',`translate(0,${H-bottom})`).call(d3.axisBottom(x).ticks(nt).tickSize(0).tickPadding(6));
     gx.select('.domain').remove();
-    svg.append('g').selectAll('line').data(x.ticks(Math.max(2, Math.floor((W-lw)/80)))).join('line')
-      .attr('x1',d=>x(d)).attr('x2',d=>x(d)).attr('y1',top).attr('y2',H-bottom).style('stroke','var(--cds-chart-grid)');
     svg.append('g').selectAll('text').data(rows).join('text')
       .attr('x', 0).attr('y', r => y(r.label) + y.bandwidth()/2).attr('dy','0.35em').attr('font-size',12).style('fill','var(--color-fg)').text(r => r.label);
     const t = R.tip(el);
     svg.append('g').selectAll('rect').data(rows).join('rect')
-      .attr('x', x(o.min ?? 0)).attr('y', r => y(r.label)).attr('height', y.bandwidth())
-      .attr('width', r => Math.max(0, x(r.v) - x(o.min ?? 0))).style('fill','var(--rt-b1)')
+      .attr('x', x(0)).attr('y', r => y(r.label)).attr('height', y.bandwidth())
+      .attr('width', r => Math.max(0, x(r.v) - x(0))).style('fill','var(--rt-b1)')
       .on('mousemove', (ev, r) => t.show(ev, o.tip(r))).on('mouseleave', () => t.hide());
     svg.append('g').selectAll('text').data(rows).join('text')
       .attr('x', r => x(r.v) + 4).attr('y', r => y(r.label) + y.bandwidth()/2).attr('dy','0.35em').attr('font-size',11).style('fill','var(--color-fg)').attr('class','num').text(r => o.fmt(r.v));
-    return {svg, x, y, W, H, top, bottom, t};
+    return {svg, x, y, W, H, top, bottom};
   }
-
+  const ref = (c, val, lbl) => {
+    c.svg.append('line').attr('x1', c.x(val)).attr('x2', c.x(val)).attr('y1', c.top - 4).attr('y2', c.H - c.bottom)
+      .style('stroke','var(--cds-chart-reference)').style('stroke-width',1.5).style('stroke-dasharray','4 3');
+    if (lbl) { const lw = R.textW(c.svg, lbl, 11); c.svg.append('text').attr('x', Math.min(c.x(val) + 4, c.W - lw - 2)).attr('y', c.H - 6).attr('font-size',11).style('fill','var(--cds-text-secondary)').text(lbl); }
+  };
   dash.draw('ychart', el => {
     const v = dash.data('valuation'), m = dash.data('macro');
     if (v.status === 'error' || m.status === 'error') return R.failed(el);
@@ -471,80 +744,49 @@ dash.calc('dpu_growth', {
     const rows = v.data.map(r => ({label: r.short, v: r.ttm_yield_pct, rr: r.runrate_yield_pct, r})).sort((a,b) => b.v - a.v);
     const mx = Math.max(d3.max(rows, r => Math.max(r.v, r.rr)), g || 0) * 1.08;
     const c = hbars(el, rows, {max: mx, fmt: v => R.f2(v) + '%', aria: 'Distribution yields compared with the 10-year G-sec',
-      tip: r => [r.label, 'Trailing yield: ' + R.f2(r.v) + '%', 'Run-rate yield: ' + R.f2(r.rr) + '%', 'Trailing DPU: ₹' + R.f2(r.r.ttm_dpu), 'Spread vs G-sec: ' + r.r.spread_bps + ' bps']});
+      tip: r => [r.label, 'Trailing yield: ' + R.f2(r.v) + '%', 'Run-rate yield: ' + R.f2(r.rr) + '%', 'Spread vs G-sec: ' + r.r.spread_bps + ' bps']});
     c.svg.append('g').selectAll('circle').data(rows).join('circle')
       .attr('cx', r => c.x(r.rr)).attr('cy', r => c.y(r.label) + c.y.bandwidth()/2).attr('r', 4.5)
       .style('fill','var(--color-bg)').style('stroke','var(--rt-b2)').style('stroke-width',2).style('pointer-events','none');
-    if (g != null) {
-      c.svg.append('line').attr('x1', c.x(g)).attr('x2', c.x(g)).attr('y1', c.top - 4).attr('y2', c.H - c.bottom)
-        .style('stroke','var(--cds-chart-reference)').style('stroke-width',1.5).style('stroke-dasharray','4 3');
-      const lbl = 'G-sec ' + R.f2(g) + '%';
-      const lw = R.textW(c.svg, lbl, 11);
-      const lx = Math.min(c.x(g) + 4, c.W - lw - 2);
-      c.svg.append('text').attr('x', lx).attr('y', c.H - 6).attr('font-size',11).style('fill','var(--cds-text-secondary)').text(lbl);
-    }
+    if (g != null) ref(c, g, 'G-sec ' + R.f2(g) + '%');
   });
-
   dash.draw('pchart', el => {
     const v = dash.data('valuation');
     if (v.status === 'error') return R.failed(el);
     if (v.status !== 'ok' || !v.data) { el.replaceChildren(); return; }
     const rows = v.data.map(r => ({label: r.short, v: r.p_nav, r})).sort((a,b) => a.v - b.v);
     const c = hbars(el, rows, {max: Math.max(1.1, d3.max(rows, r => r.v) * 1.05), fmt: v => R.f2(v) + 'x', aria: 'Price to NAV by REIT',
-      tip: r => [r.label, 'Price: ₹' + R.f2(r.r.price), 'NAV: ₹' + R.f2(r.r.nav), 'Price / NAV: ' + R.f2(r.v) + 'x', 'Discount to NAV: ' + R.f2(r.r.discount_pct) + '%']});
-    c.svg.append('line').attr('x1', c.x(1)).attr('x2', c.x(1)).attr('y1', c.top - 4).attr('y2', c.H - c.bottom)
-      .style('stroke','var(--cds-chart-reference)').style('stroke-width',1.5).style('stroke-dasharray','4 3');
+      tip: r => [r.label, 'Price: ₹' + R.f2(r.r.price), 'NAV: ₹' + R.f2(r.r.nav), 'Discount to NAV: ' + R.f2(r.r.discount_pct) + '%', '52-week range: ₹' + R.f0(r.r.low_52w) + ' to ₹' + R.f0(r.r.high_52w)]});
+    ref(c, 1);
   });
+})();
+</script>
 
-  dash.draw('rchart', el => {
-    const v = dash.data('valuation');
-    if (v.status === 'error') return R.failed(el);
-    if (v.status !== 'ok' || !v.data) { el.replaceChildren(); return; }
-    const rows = v.data.slice().sort((a,b) => b.range_pos_pct - a.range_pos_pct);
-    const W = Math.max(280, el.clientWidth), rowH = 38, top = 6, H = top + rows.length * rowH + 6;
-    el.replaceChildren();
-    const svg = d3.select(el).append('svg').attr('width','100%').attr('viewBox',`0 0 ${W} ${H}`).attr('role','img').attr('aria-label','Price within 52-week range');
-    const lw = d3.max(rows, r => R.textW(svg, r.short, 12)) + 12;
-    const pw = R.textW(svg, '100% of range', 11) + 10;
-    const x = d3.scaleLinear().domain([0,100]).range([lw + 30, W - pw - 30]);
-    const t = R.tip(el);
-    const g = svg.selectAll('g.row').data(rows).join('g').attr('transform', (r,i) => `translate(0,${top + i*rowH})`);
-    g.append('text').attr('x',0).attr('y',rowH/2).attr('dy','0.35em').attr('font-size',12).style('fill','var(--color-fg)').text(r => r.short);
-    g.append('text').attr('x', x(0) - 6).attr('y', rowH/2).attr('dy','0.35em').attr('text-anchor','end').attr('font-size',11).attr('class','num').style('fill','var(--cds-text-secondary)').text(r => R.f0(r.low_52w));
-    g.append('text').attr('x', x(100) + 6).attr('y', rowH/2).attr('dy','0.35em').attr('font-size',11).attr('class','num').style('fill','var(--cds-text-secondary)').text(r => R.f0(r.high_52w));
-    g.append('line').attr('x1', x(0)).attr('x2', x(100)).attr('y1', rowH/2).attr('y2', rowH/2).style('stroke','var(--rt-b4)').style('stroke-width',6);
-    g.append('rect').attr('x', r => x(Math.max(0,Math.min(100,r.range_pos_pct))) - 5).attr('y', rowH/2 - 9).attr('width',10).attr('height',18).style('fill','var(--rt-b2)')
-      .on('mousemove', (ev, r) => t.show(ev, [r.short, 'Price: ₹' + R.f2(r.price), '52-week low: ₹' + R.f0(r.low_52w), '52-week high: ₹' + R.f0(r.high_52w), 'Position: ' + r.range_pos_pct + '% of range']))
-      .on('mouseleave', () => t.hide());
-    g.append('text').attr('x', W - 2).attr('y', rowH/2).attr('dy','0.35em').attr('text-anchor','end').attr('font-size',11).attr('class','num').style('fill','var(--color-fg)').text(r => r.range_pos_pct + '% of range');
-  });
-
+<script>
+/* Payouts */
+(function(){
+  const R = window.RT;
   dash.draw('dpu', el => {
     const d = dash.data('distributions'), gr = dash.data('dpu_growth'), fu = dash.data('fundamentals');
     if (d.status === 'error') return R.failed(el);
     if (d.status !== 'ok' || gr.status !== 'ok' || fu.status !== 'ok' || !gr.data) { el.replaceChildren(); return; }
-    const quarters = ['Q1 FY26','Q2 FY26','Q3 FY26','Q4 FY26','Q1 FY27','Q2 FY27'];
-    const allq = [...new Set(d.data.slice().sort((a,b)=>a.q_order-b.q_order).map(r => r.quarter))];
-    const qs = allq.length ? allq : quarters;
+    const qs = [...new Set(d.data.slice().sort((a,b)=>a.q_order-b.q_order).map(r => r.quarter))];
     const boxes = fu.data.map(f => { const b = document.createElement('div'); b.setAttribute('data-id', f.id); return b; });
     el.replaceChildren(...boxes);
     fu.data.forEach((f, i) => {
       const box = boxes[i];
       const rows = d.data.filter(r => r.id === f.id);
       const g = gr.data.find(r => r.id === f.id) || {};
-      const h = document.createElement('h3'); h.textContent = f.short; box.appendChild(h);
-      const p = document.createElement('p'); p.className = 'cap';
-      p.textContent = 'Latest ₹' + (g.dpu != null ? (+g.dpu).toFixed(g.dpu < 3 ? 3 : 2) : 'n/a') + ' · ' + (g.yoy_pct != null ? (g.yoy_pct >= 0 ? '+' : '') + g.yoy_pct + '% YoY' : 'no year-ago quarter yet');
-      box.appendChild(p);
-      const W = Math.max(180, box.clientWidth - 16), H = 110;
+      box.appendChild(R.el('h3', null, f.short));
+      box.appendChild(R.el('p', 'cap', 'Latest ₹' + (g.dpu != null ? (+g.dpu).toFixed(g.dpu < 3 ? 3 : 2) : 'n/a') + ' · ' + (g.yoy_pct != null ? (g.yoy_pct >= 0 ? '+' : '') + g.yoy_pct + '% on a year ago' : 'listed this year')));
+      const W = Math.max(180, box.clientWidth), H = 110;
       const svg = d3.select(box).append('svg').attr('width','100%').attr('viewBox',`0 0 ${W} ${H}`).attr('role','img').attr('aria-label', f.short + ' quarterly distribution per unit');
       const x = d3.scaleBand().domain(qs).range([2, W - 2]).padding(0.25);
-      const ymax = d3.max(rows, r => r.dpu) || 1;
-      const y = d3.scaleLinear().domain([0, ymax * 1.18]).range([H - 18, 4]);
+      const y = d3.scaleLinear().domain([0, (d3.max(rows, r => r.dpu) || 1) * 1.15]).range([H - 18, 6]);
       const tp = R.tip(box);
       svg.selectAll('rect').data(rows).join('rect')
         .attr('x', r => x(r.quarter)).attr('width', x.bandwidth()).attr('y', r => y(r.dpu)).attr('height', r => (H - 18) - y(r.dpu))
-        .style('fill', r => r.quarter === g.quarter ? 'var(--rt-b2)' : 'var(--rt-b3)')
+        .style('fill', r => r.quarter === g.quarter ? 'var(--rt-b2)' : 'var(--rt-b4)')
         .on('mousemove', (ev, r) => tp.show(ev, [f.short + ', ' + r.quarter, 'DPU: ₹' + r.dpu].concat(r.note ? [r.note] : []))).on('mouseleave', () => tp.hide());
       svg.selectAll('text.q').data(qs).join('text').attr('class','q').attr('x', q => x(q) + x.bandwidth()/2).attr('y', H - 4).attr('text-anchor','middle').attr('font-size',9).style('fill','var(--cds-text-secondary)').text(q => q.replace(' FY',"'"));
     });
@@ -561,7 +803,7 @@ dash.calc('dpu_growth', {
     const svg = d3.select(el).append('svg').attr('width','100%').attr('viewBox',`0 0 ${W} ${H}`).attr('role','img').attr('aria-label','Distribution mix by component');
     const lw = d3.max(rows, r => R.textW(svg, r.short, 12)) + 10;
     const x = d3.scaleLinear().domain([0,100]).range([lw, W - 4]);
-    const y = d3.scaleBand().domain(rows.map(r => r.short)).range([top, H - bottom]).padding(0.25);
+    const y = d3.scaleBand().domain(rows.map(r => r.short)).range([top, H - bottom]).padding(0.28);
     const ax = svg.append('g').attr('class','axis').attr('transform',`translate(0,${H-bottom})`).call(d3.axisBottom(x).ticks(W < 420 ? 3 : 5).tickFormat(d => d + '%').tickSize(0).tickPadding(6));
     ax.select('.domain').remove();
     svg.append('g').selectAll('text').data(rows).join('text').attr('x',0).attr('y', r => y(r.short) + y.bandwidth()/2).attr('dy','0.35em').attr('font-size',12).style('fill','var(--color-fg)').text(r => r.short);
@@ -580,12 +822,7 @@ dash.calc('dpu_growth', {
       });
     });
   });
-})();
-</script>
 
-<script>
-(function(){
-  const R = window.RT;
   const amt = document.getElementById('calc-amt'), slab = document.getElementById('calc-slab');
   if (amt) amt.addEventListener('input', () => dash.draw('calc-out'));
   if (slab) slab.addEventListener('change', () => dash.draw('calc-out'));
@@ -609,93 +846,46 @@ dash.calc('dpu_growth', {
     const units = Math.floor(a / r.price);
     const income = units * r.ttm_dpu;
     const taxable = income * ((+f.mix_interest || 0) + (+f.mix_other || 0)) / 100;
-    const repay = income * (+f.mix_repayment || 0) / 100;
     const tax = taxable * s / 100 * 1.04;
     const post = income - tax;
     const invested = units * r.price;
-    const cell = (label, val, note) => { const d = document.createElement('div'); const p1=document.createElement('p'); p1.className='cap'; p1.textContent=label; const p2=document.createElement('p'); p2.className='v'; p2.textContent=val; d.append(p1,p2); if(note){const p3=document.createElement('p'); p3.className='cap'; p3.textContent=note; d.append(p3);} return d; };
+    const cell = (label, val, note) => { const d = document.createElement('div'); d.append(R.el('p','cap',label), R.el('p','v',val)); if (note) d.append(R.el('p','cap',note)); return d; };
     el.replaceChildren(
-      cell('Units you can buy', R.f0(units), '₹' + R.f0(invested) + ' at ₹' + R.f2(r.price) + ' per unit'),
+      cell('Units you can buy', R.f0(units), '₹' + R.f0(invested) + ' at ₹' + R.f2(r.price) + ' each'),
       cell('Payouts over a year', '₹' + R.f0(income), 'At trailing DPU of ₹' + R.f2(r.ttm_dpu)),
-      cell('Estimated tax this year', '₹' + R.f0(tax), 'On interest and other income at ' + s + '% plus cess'),
-      cell('Post-tax yield', invested ? R.f2(post / invested * 100) + '%' : 'n/a', 'Pre-tax ' + (invested ? R.f2(income / invested * 100) : 'n/a') + '%'),
-      cell('Repayment of debt received', '₹' + R.f0(repay), 'Lowers your cost of acquisition')
+      cell('Estimated tax', '₹' + R.f0(tax), 'Interest and other income at ' + s + '% plus cess'),
+      cell('Post-tax yield', invested ? R.f2(post / invested * 100) + '%' : 'n/a', 'Pre-tax ' + (invested ? R.f2(income / invested * 100) : 'n/a') + '%')
     );
   });
 })();
 </script>
 
 <script>
-(function(){
-  const R = window.RT;
-  dash.draw('prof-reit', sel => {
-    const fu = dash.data('fundamentals');
-    const rows = fu.status === 'ok' ? fu.data : [];
-    const cur = sel.value || R.state.prof || (rows[0] && rows[0].id);
-    sel.replaceChildren(...rows.map(r => new Option(r.name, r.id)));
-    if (cur) sel.value = cur;
-    sel.onchange = () => { R.state.prof = sel.value; dash.draw('profile'); };
-  });
-  dash.draw('profile', el => {
-    const fu = dash.data('fundamentals'), v = dash.data('valuation');
-    if (fu.status === 'error') return R.failed(el);
-    if (fu.status !== 'ok' || v.status !== 'ok' || !v.data) { el.replaceChildren(); return; }
-    const sel = document.getElementById('prof-reit');
-    const id = (sel && sel.value) || R.state.prof || fu.data[0].id;
-    const f = fu.data.find(x => x.id === id) || fu.data[0];
-    const r = v.data.find(x => x.id === f.id) || {};
-    const h = document.createElement('h3'); h.textContent = f.name + ' (NSE: ' + f.id + ')';
-    const sub = document.createElement('p'); sub.className = 'cap'; sub.style.margin = '4px 0 12px';
-    sub.textContent = f.asset_type + ' REIT · Sponsor: ' + f.sponsor + ' · Listed ' + R.date(f.listed) + ' at ₹' + f.ipo_price + ' · ' + (r.since_ipo_pct >= 0 ? '+' : '') + R.f2(r.since_ipo_pct) + '% price change since IPO (excl. payouts)';
-    const dl = document.createElement('dl'); dl.className = 'kv';
-    const add = (k, val) => { const dt=document.createElement('dt'); dt.textContent=k; const dd=document.createElement('dd'); dd.textContent=val; dl.append(dt,dd); };
-    add('Portfolio', f.assets);
-    add('Cities', f.cities);
-    add('Leasable area', f.completed_msf + ' msf completed of ' + f.total_msf + ' msf total');
-    add('Occupancy', f.occupancy_note);
-    add('WALE', f.wale_yrs + ' years');
-    if (f.in_place_rent) add('In-place rent', '₹' + f.in_place_rent + ' per sq ft per month');
-    add('Gross asset value', '₹' + R.f0(f.gav_cr) + ' cr');
-    add('NAV per unit', '₹' + R.f2(f.nav) + ' (price / NAV ' + R.f2(r.p_nav) + 'x)');
-    add('Leverage', 'LTV ' + f.ltv_pct + '%, average cost of debt ' + f.cost_of_debt_pct + '%');
-    add('Credit rating', f.rating);
-    add(f.q_label + ' results', 'Revenue ₹' + R.f0(f.q_rev_cr) + ' cr, NOI ₹' + R.f0(f.q_noi_cr) + ' cr, distribution ₹' + R.f0(f.q_dist_cr) + ' cr');
-    add(f.q_label + ' DPU', '₹' + f.q_dpu + ' per unit; record date ' + R.date(f.record_date) + ', paid by ' + R.date(f.pay_date));
-    add('Trailing DPU and yield', '₹' + R.f2(r.ttm_dpu) + ' (' + R.f2(r.ttm_yield_pct) + '%)' + (r.ttm_quarters < 4 ? ', annualised from ' + r.ttm_quarters + ' quarters' : ''));
-    add('Guidance', f.guidance + (r.guide_yield_pct != null ? '. Guidance midpoint implies ' + R.f2(r.guide_yield_pct) + '% at today’s price' : ''));
-    const src = document.createElement('p'); src.className = 'cap'; src.style.marginTop = '12px';
-    const a = document.createElement('a'); a.href = f.source_url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Latest results document';
-    src.append('Source: ', a);
-    el.replaceChildren(h, sub, dl, src);
-  });
-})();
-</script>
-
-<script>
+/* Learn tables */
 (function(){
   const R = window.RT;
   dash.draw('macro-t', tb => {
     const m = dash.data('macro');
     if (m.status !== 'ok') { tb.replaceChildren(); return; }
-    tb.replaceChildren(...m.data.map(r => { const tr=document.createElement('tr'); 
-      [['l',r.metric],['',R.f2(r.value)],['',R.date(r.as_of)],['l',r.note]].forEach(([c,t]) => { const td=document.createElement('td'); if(c) td.className=c; td.textContent=t; if(c==='l'&&t===r.note) td.style.whiteSpace='normal'; tr.appendChild(td); });
+    tb.replaceChildren(...m.data.map(r => { const tr = document.createElement('tr');
+      tr.append(R.el('td', 'l', r.metric), R.el('td', null, R.f2(r.value) + '%'), R.el('td', null, R.date(r.as_of)));
       return tr; }));
   });
   dash.draw('sm-t', tb => {
     const s = dash.data('sm_reits');
     if (s.status !== 'ok') { tb.replaceChildren(); return; }
-    tb.replaceChildren(...s.data.map(r => { const tr=document.createElement('tr'); 
-      [['l',r.scheme],['l',r.asset],['',R.f2(r.issue_cr)],['',r.listed]].forEach(([c,t]) => { const td=document.createElement('td'); if(c) td.className=c; td.textContent=t; if(c==='l') td.style.whiteSpace='normal'; tr.appendChild(td); });
+    tb.replaceChildren(...s.data.map(r => { const tr = document.createElement('tr');
+      tr.append(R.el('td', 'l', r.scheme), R.el('td', 'l wrap', r.asset), R.el('td', null, R.f2(r.issue_cr)));
       return tr; }));
   });
 })();
 </script>
 
 <script>
+/* News */
 (function(){
-  const R = window.RT;
-  const SHOW = 8;
-  R.state.newsAll = false;
+  const R = window.RT, E = R.el;
+  const SHOW = 10;
   const fr = document.getElementById('news-reit');
   if (fr) fr.addEventListener('change', () => { R.state.newsAll = false; dash.draw('news'); });
   dash.draw('news-cat', sel => {
@@ -715,28 +905,25 @@ dash.calc('dpu_growth', {
     const cat = (cs && cs.value) || '';
     const rows = s.data.filter(r => (!reit || r.reit === reit) && (!cat || r.category === cat))
       .sort((a, b) => String(b.date).localeCompare(String(a.date)));
-    if (!rows.length) { const p = document.createElement('p'); p.className = 'cap'; p.textContent = 'No news matches these filters.'; el.replaceChildren(p); return; }
+    if (!rows.length) { el.replaceChildren(E('p', 'cap', 'No news matches these filters.')); return; }
     const now = Date.now();
-    const ol = document.createElement('ol'); ol.className = 'news-list';
+    const ol = E('ol', 'news-list');
     rows.slice(0, R.state.newsAll ? rows.length : SHOW).forEach(r => {
-      const li = document.createElement('li'); li.className = 'news-item';
-      const d = document.createElement('div'); d.className = 'news-date'; d.textContent = R.date(r.date);
-      const body = document.createElement('div');
-      const tags = document.createElement('div'); tags.className = 'news-tags';
+      const li = E('li', 'news-item');
+      const body = E('div');
+      const tags = E('p', 'news-tags');
       const age = (now - new Date(r.date + 'T00:00:00Z').getTime()) / 86400000;
-      if (age >= 0 && age <= 3) { const n = document.createElement('span'); n.className = 'new'; n.textContent = 'New'; tags.appendChild(n); }
-      [r.reit_label, r.category].forEach(t => { if (t) { const sp = document.createElement('span'); sp.textContent = t; tags.appendChild(sp); } });
-      const h = document.createElement('h3');
-      if (r.url) { const a = document.createElement('a'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.headline; h.appendChild(a); } else h.textContent = r.headline;
-      const sum = document.createElement('p'); sum.className = 'news-sum'; sum.textContent = r.summary || '';
-      const src = document.createElement('p'); src.className = 'cap'; src.style.marginTop = '4px'; src.textContent = 'Source: ' + (r.source || 'n/a');
-      body.append(tags, h, sum, src);
-      li.append(d, body); ol.appendChild(li);
+      if (age >= 0 && age <= 3) tags.appendChild(E('span', 'new', 'New'));
+      tags.append([r.reit_label, r.category].filter(Boolean).join(' · '));
+      const h = E('h3');
+      if (r.url) { const a = E('a', null, r.headline); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; h.appendChild(a); } else h.textContent = r.headline;
+      body.append(tags, h, E('p', 'news-sum', r.summary || ''), E('p', 'cap', 'Source: ' + (r.source || 'n/a')));
+      body.lastChild.style.marginTop = '4px';
+      li.append(E('div', 'news-date', R.date(r.date)), body); ol.appendChild(li);
     });
     const kids = [ol];
     if (rows.length > SHOW) {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'rt-more';
-      b.textContent = R.state.newsAll ? 'Show fewer' : 'Show all ' + rows.length + ' items';
+      const b = E('button', 'rt-more', R.state.newsAll ? 'Show fewer' : 'Show all ' + rows.length + ' items'); b.type = 'button';
       b.onclick = () => { R.state.newsAll = !R.state.newsAll; dash.draw('news'); };
       kids.push(b);
     }

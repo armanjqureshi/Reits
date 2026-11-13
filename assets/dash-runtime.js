@@ -10,7 +10,8 @@
     distributions: 'data/distributions.json',
     macro: 'data/macro.json',
     sm_reits: 'data/sm_reits.json',
-    news: 'data/news.json'
+    news: 'data/news.json',
+    holdings: 'data/holdings.json'
   };
 
   var store = {};
@@ -49,6 +50,7 @@
 
   window.dash = {
     data: data,
+    redraw: function () { runAll(); },
     calc: function (id, o) { calcs[id] = o; },
     draw: function (name, fn) {
       if (typeof fn === 'function') draws[name] = fn;
