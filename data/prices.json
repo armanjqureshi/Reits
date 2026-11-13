@@ -1,0 +1,50 @@
+[
+ {
+  "id": "EMBASSY",
+  "price": 418.79,
+  "price_date": "2026-11-12",
+  "high_52w": 462,
+  "low_52w": 407,
+  "price_source": "INDmoney REIT sector page (12 Nov 2026, 3:09 pm IST); 52-week range from Screener.in"
+ },
+ {
+  "id": "MINDSPACE",
+  "price": 500.95,
+  "price_date": "2026-11-12",
+  "high_52w": 526,
+  "low_52w": 441,
+  "price_source": "INDmoney REIT sector page (12 Nov 2026, 3:09 pm IST); 52-week range from Screener.in"
+ },
+ {
+  "id": "BIRET",
+  "price": 318.05,
+  "price_date": "2026-11-12",
+  "high_52w": 376,
+  "low_52w": 300,
+  "price_source": "INDmoney REIT sector page (12 Nov 2026, 3:09 pm IST); 52-week range from Screener.in"
+ },
+ {
+  "id": "NXST",
+  "price": 159.79,
+  "price_date": "2026-11-12",
+  "high_52w": 192,
+  "low_52w": 150,
+  "price_source": "INDmoney REIT sector page (12 Nov 2026, 3:09 pm IST); 52-week range from Screener.in"
+ },
+ {
+  "id": "KRT",
+  "price": 110.99,
+  "price_date": "2026-11-12",
+  "high_52w": 129,
+  "low_52w": 108,
+  "price_source": "INDmoney REIT sector page (12 Nov 2026, 3:09 pm IST); 52-week range from Screener.in"
+ },
+ {
+  "id": "BAGMANE",
+  "price": 107.0,
+  "price_date": "2026-11-12",
+  "high_52w": 112,
+  "low_52w": 102,
+  "price_source": "Screener.in close (12 Nov 2026, shown rounded); range since 14 May 2026 listing"
+ }
+]

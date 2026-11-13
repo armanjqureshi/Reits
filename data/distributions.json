@@ -1,0 +1,219 @@
+[
+ {
+  "id": "EMBASSY",
+  "quarter": "Q1 FY26",
+  "q_order": 1,
+  "dpu": 5.8,
+  "note": "Derived: FY26 total ₹25.28 less Q2 to Q4"
+ },
+ {
+  "id": "EMBASSY",
+  "quarter": "Q2 FY26",
+  "q_order": 2,
+  "dpu": 6.51,
+  "note": ""
+ },
+ {
+  "id": "EMBASSY",
+  "quarter": "Q3 FY26",
+  "q_order": 3,
+  "dpu": 6.47,
+  "note": ""
+ },
+ {
+  "id": "EMBASSY",
+  "quarter": "Q4 FY26",
+  "q_order": 4,
+  "dpu": 6.5,
+  "note": ""
+ },
+ {
+  "id": "EMBASSY",
+  "quarter": "Q1 FY27",
+  "q_order": 5,
+  "dpu": 6.31,
+  "note": ""
+ },
+ {
+  "id": "EMBASSY",
+  "quarter": "Q2 FY27",
+  "q_order": 6,
+  "dpu": 7.07,
+  "note": ""
+ },
+ {
+  "id": "MINDSPACE",
+  "quarter": "Q1 FY26",
+  "q_order": 1,
+  "dpu": 5.79,
+  "note": ""
+ },
+ {
+  "id": "MINDSPACE",
+  "quarter": "Q2 FY26",
+  "q_order": 2,
+  "dpu": 5.83,
+  "note": ""
+ },
+ {
+  "id": "MINDSPACE",
+  "quarter": "Q3 FY26",
+  "q_order": 3,
+  "dpu": 5.83,
+  "note": ""
+ },
+ {
+  "id": "MINDSPACE",
+  "quarter": "Q4 FY26",
+  "q_order": 4,
+  "dpu": 6.64,
+  "note": ""
+ },
+ {
+  "id": "MINDSPACE",
+  "quarter": "Q1 FY27",
+  "q_order": 5,
+  "dpu": 6.67,
+  "note": ""
+ },
+ {
+  "id": "MINDSPACE",
+  "quarter": "Q2 FY27",
+  "q_order": 6,
+  "dpu": 6.67,
+  "note": ""
+ },
+ {
+  "id": "BIRET",
+  "quarter": "Q1 FY26",
+  "q_order": 1,
+  "dpu": 5.25,
+  "note": ""
+ },
+ {
+  "id": "BIRET",
+  "quarter": "Q2 FY26",
+  "q_order": 2,
+  "dpu": 5.25,
+  "note": ""
+ },
+ {
+  "id": "BIRET",
+  "quarter": "Q3 FY26",
+  "q_order": 3,
+  "dpu": 5.4,
+  "note": ""
+ },
+ {
+  "id": "BIRET",
+  "quarter": "Q4 FY26",
+  "q_order": 4,
+  "dpu": 5.5,
+  "note": ""
+ },
+ {
+  "id": "BIRET",
+  "quarter": "Q1 FY27",
+  "q_order": 5,
+  "dpu": 5.6,
+  "note": ""
+ },
+ {
+  "id": "BIRET",
+  "quarter": "Q2 FY27",
+  "q_order": 6,
+  "dpu": 5.7,
+  "note": ""
+ },
+ {
+  "id": "NXST",
+  "quarter": "Q1 FY26",
+  "q_order": 1,
+  "dpu": 2.23,
+  "note": ""
+ },
+ {
+  "id": "NXST",
+  "quarter": "Q2 FY26",
+  "q_order": 2,
+  "dpu": 2.198,
+  "note": ""
+ },
+ {
+  "id": "NXST",
+  "quarter": "Q3 FY26",
+  "q_order": 3,
+  "dpu": 2.367,
+  "note": ""
+ },
+ {
+  "id": "NXST",
+  "quarter": "Q4 FY26",
+  "q_order": 4,
+  "dpu": 2.286,
+  "note": ""
+ },
+ {
+  "id": "NXST",
+  "quarter": "Q1 FY27",
+  "q_order": 5,
+  "dpu": 2.442,
+  "note": ""
+ },
+ {
+  "id": "NXST",
+  "quarter": "Q2 FY27",
+  "q_order": 6,
+  "dpu": 2.367,
+  "note": ""
+ },
+ {
+  "id": "KRT",
+  "quarter": "Q2 FY26",
+  "q_order": 2,
+  "dpu": 1.556,
+  "note": "First payout after Aug 2025 listing"
+ },
+ {
+  "id": "KRT",
+  "quarter": "Q3 FY26",
+  "q_order": 3,
+  "dpu": 1.568,
+  "note": ""
+ },
+ {
+  "id": "KRT",
+  "quarter": "Q4 FY26",
+  "q_order": 4,
+  "dpu": 1.616,
+  "note": ""
+ },
+ {
+  "id": "KRT",
+  "quarter": "Q1 FY27",
+  "q_order": 5,
+  "dpu": 1.695,
+  "note": ""
+ },
+ {
+  "id": "KRT",
+  "quarter": "Q2 FY27",
+  "q_order": 6,
+  "dpu": 1.723,
+  "note": ""
+ },
+ {
+  "id": "BAGMANE",
+  "quarter": "Q1 FY27",
+  "q_order": 5,
+  "dpu": 1.5,
+  "note": ""
+ },
+ {
+  "id": "BAGMANE",
+  "quarter": "Q2 FY27",
+  "q_order": 6,
+  "dpu": 1.55,
+  "note": ""
+ }
+]

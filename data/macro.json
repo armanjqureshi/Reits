@@ -1,0 +1,18 @@
+[
+ {
+  "metric": "RBI repo rate",
+  "value": 5.5,
+  "unit": "%",
+  "as_of": "2026-10-07",
+  "note": "Raised 25 bps; stance calibrated tightening. Next MPC 2 to 4 Dec 2026",
+  "source": "RBI Monetary Policy Statement, 7 Oct 2026"
+ },
+ {
+  "metric": "10-year G-sec yield",
+  "value": 7.15,
+  "unit": "%",
+  "as_of": "2026-11-10",
+  "note": "Benchmark 10-year government bond",
+  "source": "Swarajya / market reports, 10 Nov 2026"
+ }
+]

@@ -1,0 +1,38 @@
+[
+ {
+  "scheme": "PropShare Platina",
+  "manager": "Property Share Investment Trust",
+  "asset": "Grade A office, Outer Ring Road, Bengaluru",
+  "issue_cr": 353,
+  "listed": "Dec 2024",
+  "status": "Listed (BSE)",
+  "min_ticket": "About ₹10 lakh per unit"
+ },
+ {
+  "scheme": "PropShare Titania",
+  "manager": "Property Share Investment Trust",
+  "asset": "Grade A+ office, Thane",
+  "issue_cr": 473,
+  "listed": "Jul 2025",
+  "status": "Listed (BSE)",
+  "min_ticket": "About ₹10 lakh per unit"
+ },
+ {
+  "scheme": "PropShare Celestia",
+  "manager": "Property Share Investment Trust",
+  "asset": "Grade A office, Ahmedabad",
+  "issue_cr": 244.65,
+  "listed": "Apr 2026",
+  "status": "Listed (BSE)",
+  "min_ticket": "₹10.5 lakh per unit (issue price)"
+ },
+ {
+  "scheme": "PropShare Lumina",
+  "manager": "Property Share Investment Trust",
+  "asset": "Two towers, OESPL Business Centre, Noida",
+  "issue_cr": 484.68,
+  "listed": "Not listed",
+  "status": "Offer document filed Aug 2026; not yet listed",
+  "min_ticket": "To be announced"
+ }
+]
