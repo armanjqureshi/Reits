@@ -12,7 +12,8 @@
 <body>
 <div id="dash-root">
 <style>
-.rt{--rt-b1:#9A6640;--rt-b2:#6B4429;--rt-b3:#C08F66;--rt-b4:#DDBFA3;--rt-light:#F6EFE8;font-family:'Fira Sans',var(--font-anthropic-sans);color:var(--color-fg);line-height:1.5}
+html,body{background:#FFFFFF !important;color-scheme:light}
+.rt{--color-fg:#241B15;--color-fg-muted:#6B5F56;--color-bg:#FFFFFF;--color-panel:#FFFFFF;--color-border-line:#E6DCD2;--color-ok:#2E7D32;--color-bad:#B3261E;--cds-chart-muted:#B8AFA7;--cds-chart-grid:#EEE7E0;--cds-chart-axis:#D6CBC0;--cds-chart-reference:#4E433B;--cds-text-secondary:#6B5F56;--cds-surface-popover:#FFFFFF;--cds-border:#DED3C8;background:#FFFFFF;color-scheme:light;--rt-b1:#9A6640;--rt-b2:#6B4429;--rt-b3:#C08F66;--rt-b4:#DDBFA3;--rt-light:#F6EFE8;font-family:'Fira Sans',var(--font-anthropic-sans);color:var(--color-fg);line-height:1.5}
 .rt *{border-radius:0 !important}
 .rt h1{font-family:'Spirit Soft','Fira Sans',var(--font-anthropic-sans);font-weight:400;font-size:34px;line-height:1.22;margin:0}
 .rt h2{font-weight:600;font-size:var(--cds-font-size-heading);margin:0 0 4px}
@@ -43,7 +44,7 @@
 
 /* REIT cards */
 .rt .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
-.rt .rcard{background:var(--color-panel);border:1px solid var(--color-border-line);padding:20px;display:flex;flex-direction:column;gap:12px}
+.rt .rcard{background:#FFFFFF;border:1px solid var(--color-border-line);padding:20px;display:flex;flex-direction:column;gap:12px}
 .rt .rcard .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .rt .rcard .type{font-size:12px;color:var(--color-fg-muted)}
 .rt .rcard .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -475,7 +476,9 @@ dash.calc('dpu_growth', {
     tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
     document.querySelectorAll('.rt .panel').forEach(p => { p.hidden = p.id !== 'tab-' + name; });
     if (push !== false) { try { history.replaceState(null, '', '#' + name); } catch (e) {} }
-    if (window.dash && dash.redraw) dash.redraw();
+    const panel = document.getElementById('tab-' + name);
+    const names = new Set([...panel.querySelectorAll('[data-draw]')].map(e => e.getAttribute('data-draw')));
+    names.forEach(n => { try { dash.draw(n); } catch (e) {} });
   }
   R.show = show;
   tabs.forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
